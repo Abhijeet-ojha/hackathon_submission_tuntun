@@ -339,7 +339,7 @@ export const EvaluationLab: React.FC<EvaluationLabProps> = ({ analysis }) => {
                     MiniLM Rank (Semantic Only)
                   </th>
                   <th className="py-3 px-3 text-center bg-green-100/70">
-                    InternLoom Hybrid Rank
+                    Resify Hybrid Rank
                   </th>
                   <th className="py-3 px-4">Why Hybrid Wins</th>
                 </tr>

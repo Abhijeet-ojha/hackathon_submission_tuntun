@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import type {
   AnalysisResponse,
   CandidateScoreOutput,
   ScoringWeights,
 } from "./types";
 import {
-  getSampleData,
   analyzeBatch,
   rescoreBatch,
   queryAnalysis,
@@ -62,29 +61,7 @@ export function App() {
   });
   const [rankingMode, setRankingMode] = useState<"deterministic" | "learned" | "hybrid">("hybrid");
   const [alpha, setAlpha] = useState<number>(0.75);
-
-  // Auto-load sample batch on mount
-  useEffect(() => {
-    loadSampleData();
-  }, []);
-
-  const loadSampleData = () => {
-    setIsLoading(true);
-    setErrorMessage(null);
-    getSampleData()
-      .then((data) => {
-        setAnalysis(data);
-        if (data.ranking_mode) setRankingMode(data.ranking_mode as any);
-        if (data.alpha !== undefined) setAlpha(data.alpha);
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setErrorMessage(
-          "Could not connect to the local ranking engine backend. Ensure FastAPI server is running on http://127.0.0.1:8000."
-        );
-        setIsLoading(false);
-      });
-  };
+  // No auto-load — analysis starts empty, users must upload their own resumes
 
   const handleAnalyze = async (jdText: string, jdFile: File | null, resumeFiles: File[]) => {
     setIsLoading(true);
@@ -708,7 +685,7 @@ export function App() {
                 </div>
 
                 <p className="font-['Karla'] text-xs leading-snug text-[#1b1c1c]">
-                  InternLoom dynamically normalizes strict degree constraints & year thresholds for early-career developers.
+                  Resify dynamically normalizes strict degree constraints & year thresholds for early-career developers.
                 </p>
 
                 <div className="bg-white/80 p-3 rounded-lg border border-[#2d2d2d] space-y-1">
@@ -772,7 +749,7 @@ export function App() {
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-secondary border border-[#2d2d2d]"></span>
             <span className="font-['Karla'] font-bold text-xs text-[#424750]">
-              InternLoom Notebook Engine • Tactile Recruiter Edition
+              Resify Notebook Engine • Tactile Recruiter Edition
             </span>
           </div>
           <div className="font-['Karla'] text-xs text-[#737782]">

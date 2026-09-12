@@ -284,10 +284,10 @@ Requirements:
                       className={`paper-btn px-3 py-1 font-['Karla'] font-bold text-xs border-2 border-[#2d2d2d] rounded-full transition-transform flex items-center gap-1 cursor-pointer ${
                         c.active
                           ? i < 2
-                            ? "bg-primary-container text-white shadow-[2px_2px_0px_#2d2d2d] rotate-[-1deg]"
+                            ? "bg-[#6f4e37] text-white shadow-[2px_2px_0px_#2d2d2d] rotate-[-1deg]"
                             : i === 6
-                            ? "bg-[#fff9c4] text-[#2d2d2d] shadow-[2px_2px_0px_#2d2d2d] rotate-[-2deg]"
-                            : "bg-[#e5e0d8] hover:bg-[#fff9c4] text-[#2d2d2d] shadow-[2px_2px_0px_#2d2d2d] rotate-[1deg]"
+                            ? "bg-[#8B6347] text-white shadow-[2px_2px_0px_#2d2d2d] rotate-[-2deg]"
+                            : "bg-[#a07850] hover:bg-[#6f4e37] hover:text-white text-white shadow-[2px_2px_0px_#2d2d2d] rotate-[1deg]"
                           : "bg-gray-200 text-gray-400 line-through opacity-60"
                       }`}
                     >

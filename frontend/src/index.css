@@ -100,9 +100,9 @@
   box-shadow: 1px 1px 0px #2d2d2d !important;
 }
 
-/* Hand-drawn Clickable Red Action Buttons - Bright, Tactile, High-Contrast */
+/* Coffee Brown Action Buttons - Warm, Tactile, Premium */
 .btn-red-action {
-  background-color: #ff4d4d !important;
+  background-color: #6F4E37 !important;
   color: #ffffff !important;
   border: 2px solid #2d2d2d !important;
   box-shadow: 3px 3px 0px #2d2d2d !important;
@@ -110,7 +110,7 @@
 }
 
 .btn-red-action:hover:not(:disabled) {
-  background-color: #ff3333 !important;
+  background-color: #5a3e2b !important;
   color: #ffffff !important;
   box-shadow: 4px 4px 0px #2d2d2d !important;
 }
@@ -121,14 +121,14 @@
 }
 
 .btn-red-action:disabled {
-  background-color: #ff7575 !important;
+  background-color: #a07855 !important;
   color: #ffffff !important;
   opacity: 0.65 !important;
   cursor: not-allowed !important;
 }
 
 .btn-red-lg {
-  background-color: #ff4d4d !important;
+  background-color: #6F4E37 !important;
   color: #ffffff !important;
   border: 2px solid #2d2d2d !important;
   box-shadow: 5px 5px 0px #2d2d2d !important;
@@ -137,7 +137,7 @@
 }
 
 .btn-red-lg:hover:not(:disabled) {
-  background-color: #ff3333 !important;
+  background-color: #5a3e2b !important;
   color: #ffffff !important;
   box-shadow: 6px 6px 0px #2d2d2d !important;
 }
@@ -148,7 +148,7 @@
 }
 
 .btn-red-lg:disabled {
-  background-color: #ff7575 !important;
+  background-color: #a07855 !important;
   color: #ffffff !important;
   opacity: 0.65 !important;
   cursor: not-allowed !important;

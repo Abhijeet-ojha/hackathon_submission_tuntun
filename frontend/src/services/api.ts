@@ -194,7 +194,7 @@ export function downloadShortlistCSV(analysis: AnalysisResponse) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.setAttribute("href", url);
-  link.setAttribute("download", `InternLoom_Shortlist_${new Date().toISOString().slice(0, 10)}.csv`);
+  link.setAttribute("download", `Resify_Shortlist_${new Date().toISOString().slice(0, 10)}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -206,7 +206,7 @@ export function downloadAuditDossierJSON(analysis: AnalysisResponse) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.setAttribute("href", url);
-  link.setAttribute("download", `InternLoom_Full_Audit_Dossier_${new Date().toISOString().slice(0, 10)}.json`);
+  link.setAttribute("download", `Resify_Full_Audit_Dossier_${new Date().toISOString().slice(0, 10)}.json`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

@@ -6,7 +6,7 @@ from .classifier import EvidenceClassifier, MODEL_PATH, METADATA_PATH
 
 def evaluate_evidence_model():
     print("=" * 60)
-    print("Evaluating InternLoom Evidence Classifier")
+    print("Evaluating Resify Evidence Classifier")
     print("=" * 60)
 
     if not os.path.exists(MODEL_PATH) or not os.path.exists(METADATA_PATH):

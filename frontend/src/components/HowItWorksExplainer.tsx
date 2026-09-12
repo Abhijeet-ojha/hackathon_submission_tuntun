@@ -20,7 +20,7 @@ export const HowItWorksExplainer: React.FC = () => {
           </h3>
         </div>
         <p className="text-xs text-[#424750] font-['Karla'] leading-relaxed max-w-3xl">
-          InternLoom is an evidence-driven hybrid candidate intelligence engine that combines semantic embeddings, ontology normalization, explicit skill matching, contextual evidence tiers, and transparent ranking to help recruiters make faster, defensible decisions.
+          Resify is an evidence-driven hybrid candidate intelligence engine that combines semantic embeddings, ontology normalization, explicit skill matching, contextual evidence tiers, and transparent ranking to help recruiters make faster, defensible decisions.
         </p>
       </div>
 

@@ -5,7 +5,7 @@ from .ranker import MODEL_PATH, METADATA_PATH
 
 def evaluate_ranking_model():
     print("=" * 60)
-    print("Evaluating InternLoom Learning-to-Rank Ranker")
+    print("Evaluating Resify Learning-to-Rank Ranker")
     print("=" * 60)
 
     if not os.path.exists(MODEL_PATH) or not os.path.exists(METADATA_PATH):

@@ -22,7 +22,7 @@ METADATA_PATH = os.path.join(CURRENT_DIR, "metadata.json")
 
 def train_ranking_model():
     print("=" * 60)
-    print("Training InternLoom Learning-to-Rank Ranker (Local ML)")
+    print("Training Resify Learning-to-Rank Ranker (Local ML)")
     print("=" * 60)
 
     # 1. Generate sample candidates and rank them with deterministic engine to compute features

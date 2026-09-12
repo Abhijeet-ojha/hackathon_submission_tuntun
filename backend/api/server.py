@@ -27,7 +27,7 @@ from ..ml.ranking.features import RankingFeatureExtractor, EXCLUDED_SENSITIVE_AT
 
 
 app = FastAPI(
-    title="InternLoom Smart Shortlisting Engine API",
+    title="Resify Smart Shortlisting Engine API",
     description="Evidence-driven hybrid candidate ranking engine without external LLMs or APIs.",
     version="1.0.0"
 )
@@ -45,7 +45,7 @@ app.add_middleware(
 @app.on_event("startup")
 def on_startup():
     print("=" * 60)
-    print("InternLoom ML stack: OFFLINE (100% Local Inference)")
+    print("Resify ML stack: OFFLINE (100% Local Inference)")
     print("Zero external LLM calls. CPU-optimized Scikit-Learn + MiniLM")
     print("=" * 60)
 
@@ -105,7 +105,7 @@ class RecruiterQueryRequest(BaseModel):
 @app.get("/")
 def root():
     return {
-        "engine": "InternLoom Smart Shortlisting Engine",
+        "engine": "Resify Smart Shortlisting Engine",
         "status": "online",
         "semantic_model": "all-MiniLM-L6-v2 (100% offline)",
         "evidence_ml_model": evidence_classifier.model_version,

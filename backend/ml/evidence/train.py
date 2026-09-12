@@ -28,7 +28,7 @@ def load_dataset(path: str = DATA_PATH):
 
 def train_evidence_model():
     print("=" * 60)
-    print("Training InternLoom Evidence Classifier (Local ML)")
+    print("Training Resify Evidence Classifier (Local ML)")
     print("=" * 60)
 
     df = load_dataset()
