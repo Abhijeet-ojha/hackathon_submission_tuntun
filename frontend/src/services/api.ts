@@ -53,12 +53,14 @@ export async function analyzeBatch(
 
 export async function rescoreBatch(
   jd: JDIntelligence,
-  weights: ScoringWeights
+  weights: ScoringWeights,
+  ranking_mode: "deterministic" | "learned" | "hybrid" = "hybrid",
+  alpha: number = 0.75
 ): Promise<AnalysisResponse> {
   const res = await fetch(`${API_BASE}/api/rescore`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ jd, weights }),
+    body: JSON.stringify({ jd, weights, ranking_mode, alpha }),
   });
 
   if (!res.ok) {
@@ -209,4 +211,52 @@ export function downloadAuditDossierJSON(analysis: AnalysisResponse) {
   link.click();
   document.body.removeChild(link);
 }
+
+export async function getMLStatus(): Promise<import("../types").MLStatus> {
+  const res = await fetch(`${API_BASE}/api/ml/status`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch ML status");
+  }
+  return res.json();
+}
+
+export async function getMLEvaluationMetrics(): Promise<import("../types").MLEvaluationMetrics> {
+  const res = await fetch(`${API_BASE}/api/ml/evaluation`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch ML evaluation metrics");
+  }
+  return res.json();
+}
+
+export async function rescoreMLRanking(
+  mode: "deterministic" | "learned" | "hybrid",
+  alpha: number = 0.75,
+  weights?: ScoringWeights
+): Promise<AnalysisResponse> {
+  const res = await fetch(`${API_BASE}/api/ml/ranking/rescore`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mode, alpha, weights }),
+  });
+  if (!res.ok) {
+    throw new Error("Failed to rescore ML ranking");
+  }
+  return res.json();
+}
+
+export async function predictEvidenceML(
+  text: string,
+  requirement: string = ""
+): Promise<import("../types").EvidencePrediction> {
+  const res = await fetch(`${API_BASE}/api/ml/evidence/predict`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text, requirement }),
+  });
+  if (!res.ok) {
+    throw new Error("Failed to predict evidence tier");
+  }
+  return res.json();
+}
+
 

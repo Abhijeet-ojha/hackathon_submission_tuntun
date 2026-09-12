@@ -352,23 +352,28 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
           {/* TAB 2: EVIDENCE GRAPH */}
           {activeTab === "graph" && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between text-xs text-[#424750] font-['Karla']">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-[#424750] font-['Karla']">
                 <p>
-                  Every score is traceable to an inspectable evidence node (JD Requirement → Matched Source → Strength Tier).
+                  Every score is traceable to an inspectable evidence node (JD Requirement → Matched Source → ML Classified Tier).
                 </p>
-                <span className="font-['Kalam'] font-bold text-primary text-sm">
-                  {candidate.evidence_graph.length} Evidence Nodes
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="font-['Kalam'] font-bold text-primary text-sm">
+                    {candidate.evidence_graph.length} Evidence Nodes
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/30">
+                    Model: evidence-v1 (Offline)
+                  </span>
+                </div>
               </div>
 
               <div className="space-y-3">
                 {candidate.evidence_graph.map((node, i) => (
                   <div
                     key={i}
-                    className="p-4 rounded-xl bg-white border-2 border-[#2d2d2d] shadow-[3px_3px_0px_#2d2d2d] space-y-2.5"
+                    className="p-4 rounded-xl bg-white border-2 border-[#2d2d2d] shadow-[3px_3px_0px_#2d2d2d] space-y-3"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <span className="font-bold text-xs text-[#1b1c1c] font-['Epilogue']">
                           {node.requirement}
                         </span>
@@ -383,8 +388,33 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                         >
                           {node.match_type.toUpperCase()}
                         </span>
+                        {node.ml_confidence !== undefined && (
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#fff3cd] text-[#856404] border border-[#856404]/40 font-mono">
+                            {Math.round(node.ml_confidence * 100)}% ML Conf
+                          </span>
+                        )}
                       </div>
-                      <div>{getTierBadge(node.evidence_strength)}</div>
+                      <div className="flex items-center gap-2">
+                        {getTierBadge(node.evidence_strength)}
+                      </div>
+                    </div>
+
+                    {/* Tier Progression Visualizer */}
+                    <div className="bg-[#fcf9f8] p-2 rounded-lg border border-[#2d2d2d]/30 flex items-center justify-between gap-1 text-[11px] font-['Karla']">
+                      <div className={`flex items-center gap-1 font-bold ${node.evidence_strength >= 1 ? "text-primary" : "text-[#737782]"}`}>
+                        <span>{node.evidence_strength >= 1 ? "✓" : "○"}</span>
+                        <span>1. Mentioned</span>
+                      </div>
+                      <span className="text-[#2d2d2d]/30">➔</span>
+                      <div className={`flex items-center gap-1 font-bold ${node.evidence_strength >= 2 ? "text-[#1b8a3b]" : "text-[#737782]"}`}>
+                        <span>{node.evidence_strength >= 2 ? "✓" : "○"}</span>
+                        <span>2. Demonstrated</span>
+                      </div>
+                      <span className="text-[#2d2d2d]/30">➔</span>
+                      <div className={`flex items-center gap-1 font-bold ${node.evidence_strength >= 3 ? "text-secondary" : "text-[#737782]"}`}>
+                        <span>{node.evidence_strength >= 3 ? "★" : "○"}</span>
+                        <span>3. Measurable Impact</span>
+                      </div>
                     </div>
 
                     <div className="text-xs text-[#424750] grid grid-cols-1 sm:grid-cols-2 gap-2 font-['Karla']">
@@ -409,8 +439,13 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                     </div>
 
                     {node.quote && (
-                      <div className="text-xs text-[#1b1c1c] bg-[#fff9c4]/50 p-2.5 rounded-lg border border-[#2d2d2d] font-['Kalam'] italic">
-                        "{node.quote}"
+                      <div className="text-xs text-[#1b1c1c] bg-[#fff9c4]/50 p-2.5 rounded-lg border border-[#2d2d2d] font-['Kalam'] italic space-y-1">
+                        <div>"{node.quote}"</div>
+                        {node.ml_reason && (
+                          <div className="not-italic text-[10px] font-sans font-bold text-primary pt-1 border-t border-dashed border-[#2d2d2d]/30">
+                            ML Model Reason: {node.ml_reason}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

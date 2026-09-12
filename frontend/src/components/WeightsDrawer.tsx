@@ -1,21 +1,27 @@
 import React, { useState } from "react";
-import { Sliders, RotateCcw, X, Check, Zap, Award, BookOpen, Layers } from "lucide-react";
+import { Sliders, RotateCcw, X, Check, Zap, Award, BookOpen, Layers, Cpu, ShieldCheck } from "lucide-react";
 import type { ScoringWeights } from "../types";
 
 interface WeightsDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   weights: ScoringWeights;
-  onApplyWeights: (weights: ScoringWeights) => void;
+  rankingMode?: "deterministic" | "learned" | "hybrid";
+  alpha?: number;
+  onApplyWeights: (weights: ScoringWeights, mode?: "deterministic" | "learned" | "hybrid", alpha?: number) => void;
 }
 
 export const WeightsDrawer: React.FC<WeightsDrawerProps> = ({
   isOpen,
   onClose,
   weights,
+  rankingMode = "hybrid",
+  alpha = 0.75,
   onApplyWeights,
 }) => {
   const [localWeights, setLocalWeights] = useState<ScoringWeights>({ ...weights });
+  const [localMode, setLocalMode] = useState<"deterministic" | "learned" | "hybrid">(rankingMode);
+  const [localAlpha, setLocalAlpha] = useState<number>(alpha);
 
   if (!isOpen) return null;
 
@@ -37,16 +43,8 @@ export const WeightsDrawer: React.FC<WeightsDrawerProps> = ({
         experience_relevance: 0.05,
         education_fit: 0.05,
       });
-    } else if (presetName === "semantic") {
-      setLocalWeights({
-        semantic: 0.50,
-        keyword: 0.15,
-        required_coverage: 0.15,
-        preferred_coverage: 0.05,
-        evidence_strength: 0.05,
-        experience_relevance: 0.10,
-        education_fit: 0.00,
-      });
+      setLocalMode("hybrid");
+      setLocalAlpha(0.75);
     } else if (presetName === "must_have_strict") {
       setLocalWeights({
         semantic: 0.10,
@@ -57,6 +55,8 @@ export const WeightsDrawer: React.FC<WeightsDrawerProps> = ({
         experience_relevance: 0.05,
         education_fit: 0.00,
       });
+      setLocalMode("deterministic");
+      setLocalAlpha(1.0);
     } else if (presetName === "evidence_focus") {
       setLocalWeights({
         semantic: 0.20,
@@ -67,11 +67,25 @@ export const WeightsDrawer: React.FC<WeightsDrawerProps> = ({
         experience_relevance: 0.05,
         education_fit: 0.00,
       });
+      setLocalMode("hybrid");
+      setLocalAlpha(0.60);
+    } else if (presetName === "ml_heavy") {
+      setLocalWeights({
+        semantic: 0.25,
+        keyword: 0.25,
+        required_coverage: 0.20,
+        preferred_coverage: 0.10,
+        evidence_strength: 0.10,
+        experience_relevance: 0.05,
+        education_fit: 0.05,
+      });
+      setLocalMode("learned");
+      setLocalAlpha(0.0);
     }
   };
 
   const handleSave = () => {
-    onApplyWeights(localWeights);
+    onApplyWeights(localWeights, localMode, localAlpha);
     onClose();
   };
 
@@ -141,7 +155,7 @@ export const WeightsDrawer: React.FC<WeightsDrawerProps> = ({
           <div className="flex items-center gap-2">
             <Sliders className="w-5 h-5 text-primary" />
             <h3 className="font-['Kalam'] text-xl font-bold text-[#1b1c1c]">
-              Formula Weight Tuner
+              Formula & ML Tuner
             </h3>
           </div>
           <button
@@ -163,30 +177,112 @@ export const WeightsDrawer: React.FC<WeightsDrawerProps> = ({
               onClick={() => applyPreset("default")}
               className="paper-btn px-2.5 py-1.5 text-xs font-['Karla'] font-bold rounded-lg bg-white hover:bg-[#eae7e7] text-[#1b1c1c] border-2 border-[#2d2d2d] shadow-[2px_2px_0px_#2d2d2d] text-left truncate cursor-pointer"
             >
-              Default (25/25/20)
+              Hybrid Default (75/25)
             </button>
             <button
               type="button"
               onClick={() => applyPreset("must_have_strict")}
               className="paper-btn px-2.5 py-1.5 text-xs font-['Karla'] font-bold rounded-lg bg-white hover:bg-[#eae7e7] text-[#1b1c1c] border-2 border-[#2d2d2d] shadow-[2px_2px_0px_#2d2d2d] text-left truncate cursor-pointer"
             >
-              Must-Have Strict (45%)
+              100% Rules Strict
             </button>
             <button
               type="button"
               onClick={() => applyPreset("evidence_focus")}
               className="paper-btn px-2.5 py-1.5 text-xs font-['Karla'] font-bold rounded-lg bg-white hover:bg-[#eae7e7] text-[#1b1c1c] border-2 border-[#2d2d2d] shadow-[2px_2px_0px_#2d2d2d] text-left truncate cursor-pointer"
             >
-              Evidence Heavy (30%)
+              Evidence Heavy (60/40)
             </button>
             <button
               type="button"
-              onClick={() => applyPreset("semantic")}
+              onClick={() => applyPreset("ml_heavy")}
               className="paper-btn px-2.5 py-1.5 text-xs font-['Karla'] font-bold rounded-lg bg-white hover:bg-[#eae7e7] text-[#1b1c1c] border-2 border-[#2d2d2d] shadow-[2px_2px_0px_#2d2d2d] text-left truncate cursor-pointer"
             >
-              Semantic Heavy (50%)
+              100% Learned ML
             </button>
           </div>
+        </div>
+
+        {/* ML Hybrid Blending Alpha Slider */}
+        <div className="mb-4 p-3.5 bg-[#d6e3ff]/40 rounded-xl border-2 border-[#2d2d2d] shadow-[3px_3px_0px_#2d2d2d]">
+          <div className="flex items-center justify-between mb-1.5">
+            <div className="flex items-center gap-1.5">
+              <Cpu className="w-4 h-4 text-primary" />
+              <span className="font-['Karla'] text-xs font-bold text-[#1b1c1c]">
+                Hybrid Blending Ratio (α)
+              </span>
+            </div>
+            <span className="text-xs font-bold font-mono text-primary bg-white px-2 py-0.5 rounded border border-[#2d2d2d]">
+              {Math.round(localAlpha * 100)}% Det / {Math.round((1 - localAlpha) * 100)}% ML
+            </span>
+          </div>
+          <p className="text-[11px] text-[#424750] font-['Karla'] mb-2 leading-tight">
+            Blends deterministic scoring with the learned pairwise ML ranker weights:
+            <span className="font-mono block text-[10px] text-primary font-bold mt-0.5">
+              Final = α·Deterministic + (1-α)·Learned ML
+            </span>
+          </p>
+
+          <div className="grid grid-cols-3 gap-1.5 mb-2.5">
+            <button
+              type="button"
+              onClick={() => {
+                setLocalMode("deterministic");
+                setLocalAlpha(1.0);
+              }}
+              className={`px-2 py-1 text-[11px] font-bold rounded border transition-all cursor-pointer ${
+                localAlpha === 1.0
+                  ? "bg-primary text-white border-[#2d2d2d] shadow-[1px_1px_0px_#2d2d2d]"
+                  : "bg-white text-[#1b1c1c] border-[#2d2d2d]/40 hover:bg-[#f0eded]"
+              }`}
+            >
+              100% Rules
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setLocalMode("hybrid");
+                setLocalAlpha(0.75);
+              }}
+              className={`px-2 py-1 text-[11px] font-bold rounded border transition-all cursor-pointer ${
+                localAlpha > 0.0 && localAlpha < 1.0
+                  ? "bg-primary text-white border-[#2d2d2d] shadow-[1px_1px_0px_#2d2d2d]"
+                  : "bg-white text-[#1b1c1c] border-[#2d2d2d]/40 hover:bg-[#f0eded]"
+              }`}
+            >
+              Hybrid (75/25)
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setLocalMode("learned");
+                setLocalAlpha(0.0);
+              }}
+              className={`px-2 py-1 text-[11px] font-bold rounded border transition-all cursor-pointer ${
+                localAlpha === 0.0
+                  ? "bg-primary text-white border-[#2d2d2d] shadow-[1px_1px_0px_#2d2d2d]"
+                  : "bg-white text-[#1b1c1c] border-[#2d2d2d]/40 hover:bg-[#f0eded]"
+              }`}
+            >
+              100% ML
+            </button>
+          </div>
+
+          <input
+            type="range"
+            min="0"
+            max="100"
+            step="5"
+            value={Math.round(localAlpha * 100)}
+            onChange={(e) => {
+              const val = parseFloat(e.target.value) / 100;
+              setLocalAlpha(val);
+              if (val === 1.0) setLocalMode("deterministic");
+              else if (val === 0.0) setLocalMode("learned");
+              else setLocalMode("hybrid");
+            }}
+            className="w-full accent-primary h-1.5 bg-white border border-[#2d2d2d] rounded-lg cursor-pointer"
+          />
         </div>
 
         {/* Sliders list */}

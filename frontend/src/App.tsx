@@ -35,6 +35,8 @@ import {
   ShieldCheck,
   TrendingUp,
   Award,
+  Cpu,
+  Sliders,
 } from "lucide-react";
 
 export function App() {
@@ -58,6 +60,8 @@ export function App() {
     a: "The top candidate combines 100% Must-Have requirement coverage with verified Tier-3 production project metrics, outscoring candidates who only listed keywords.",
     rule: "Deterministic Multi-Signal Hybrid Ranking",
   });
+  const [rankingMode, setRankingMode] = useState<"deterministic" | "learned" | "hybrid">("hybrid");
+  const [alpha, setAlpha] = useState<number>(0.75);
 
   // Auto-load sample batch on mount
   useEffect(() => {
@@ -70,6 +74,8 @@ export function App() {
     getSampleData()
       .then((data) => {
         setAnalysis(data);
+        if (data.ranking_mode) setRankingMode(data.ranking_mode as any);
+        if (data.alpha !== undefined) setAlpha(data.alpha);
         setIsLoading(false);
       })
       .catch(() => {
@@ -86,6 +92,8 @@ export function App() {
     try {
       const result = await analyzeBatch(jdText, jdFile, resumeFiles, analysis?.weights);
       setAnalysis(result);
+      if (result.ranking_mode) setRankingMode(result.ranking_mode as any);
+      if (result.alpha !== undefined) setAlpha(result.alpha);
       setActiveTab("dashboard");
     } catch (err: any) {
       setErrorMessage(err.message || "Failed to analyze candidate batch.");
@@ -94,17 +102,29 @@ export function App() {
     }
   };
 
-  const handleApplyWeights = async (newWeights: ScoringWeights) => {
+  const handleApplyWeights = async (
+    newWeights: ScoringWeights,
+    mode: "deterministic" | "learned" | "hybrid" = rankingMode,
+    newAlpha: number = alpha
+  ) => {
     if (!analysis) return;
     setIsLoading(true);
     try {
-      const updated = await rescoreBatch(analysis.jd, newWeights);
+      const updated = await rescoreBatch(analysis.jd, newWeights, mode, newAlpha);
       setAnalysis(updated);
+      setRankingMode(mode);
+      setAlpha(newAlpha);
     } catch (err: any) {
       setErrorMessage(err.message || "Failed to re-score batch with new weights.");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleModeSwitch = async (mode: "deterministic" | "learned" | "hybrid") => {
+    if (!analysis) return;
+    const newAlpha = mode === "deterministic" ? 1.0 : mode === "learned" ? 0.0 : 0.75;
+    await handleApplyWeights(analysis.weights, mode, newAlpha);
   };
 
   const handleToggleCompare = (candidate: CandidateScoreOutput) => {
@@ -294,6 +314,66 @@ export function App() {
                 </span>
                 <span className="text-[#737782]">at TechNova Solutions</span>
               </p>
+            </div>
+
+            {/* Custom ML Intelligence Mode Selector Bar */}
+            <div className="bg-white p-3.5 sm:p-4 rounded-xl border-2 border-[#2d2d2d] shadow-[4px_4px_0px_#2d2d2d] flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#eaf1ff] border border-primary/40 text-primary text-xs font-bold font-['Karla']">
+                  <Cpu className="w-3.5 h-3.5 shrink-0" />
+                  <span>ML Ranking Layer:</span>
+                </div>
+                <div className="inline-flex rounded-lg border-2 border-[#2d2d2d] p-0.5 bg-[#f0eded] shadow-[2px_2px_0px_#2d2d2d]">
+                  <button
+                    type="button"
+                    onClick={() => handleModeSwitch("hybrid")}
+                    className={`px-3 py-1 text-xs font-['Karla'] font-bold rounded-md transition-all cursor-pointer ${
+                      rankingMode === "hybrid"
+                        ? "bg-[#ff4d4d] text-white shadow-[1px_1px_0px_#2d2d2d]"
+                        : "text-[#1b1c1c] hover:bg-white"
+                    }`}
+                  >
+                    🛡️ Hybrid Blend (75% Det / 25% ML)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleModeSwitch("deterministic")}
+                    className={`px-3 py-1 text-xs font-['Karla'] font-bold rounded-md transition-all cursor-pointer ${
+                      rankingMode === "deterministic"
+                        ? "bg-[#ff4d4d] text-white shadow-[1px_1px_0px_#2d2d2d]"
+                        : "text-[#1b1c1c] hover:bg-white"
+                    }`}
+                  >
+                    📋 100% Rules (Deterministic)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleModeSwitch("learned")}
+                    className={`px-3 py-1 text-xs font-['Karla'] font-bold rounded-md transition-all cursor-pointer ${
+                      rankingMode === "learned"
+                        ? "bg-[#ff4d4d] text-white shadow-[1px_1px_0px_#2d2d2d]"
+                        : "text-[#1b1c1c] hover:bg-white"
+                    }`}
+                  >
+                    ⚡ 100% Learned (LTR Model)
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 text-xs font-['Karla']">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#d4edda] text-[#155724] border border-[#c3e6cb] font-bold">
+                  <span className="w-2 h-2 rounded-full bg-[#28a745] animate-pulse"></span>
+                  Classifier: 90.0% CV
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsWeightsOpen(true)}
+                  className="paper-btn inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#fdfbf7] hover:bg-[#eae7e7] text-[#1b1c1c] font-bold border border-[#2d2d2d] shadow-[1px_1px_0px_#2d2d2d] cursor-pointer text-xs"
+                >
+                  <Sliders className="w-3 h-3 text-primary" />
+                  <span>Tune α Blend</span>
+                </button>
+              </div>
             </div>
 
             {/* Recruiter Brief Hero Component */}
@@ -715,7 +795,7 @@ export function App() {
         />
       )}
 
-      {/* Formula Weights Drawer */}
+      {/* Formula & ML Weights Drawer */}
       <WeightsDrawer
         isOpen={isWeightsOpen}
         onClose={() => setIsWeightsOpen(false)}
@@ -730,6 +810,8 @@ export function App() {
             education_fit: 0.05,
           }
         }
+        rankingMode={rankingMode}
+        alpha={alpha}
         onApplyWeights={handleApplyWeights}
       />
     </div>

@@ -69,6 +69,15 @@ class KeywordMatcher:
             )
             raw_evidence_levels[req] = ev_level
 
+            # ML Evidence Classification
+            ml_pred = None
+            try:
+                from ..ml.evidence.inference import predict_evidence_tier
+                if ev_quote:
+                    ml_pred = predict_evidence_tier(ev_quote, req)
+            except Exception:
+                ml_pred = None
+
             if is_direct:
                 matched_reqs.append(req)
                 total_direct_points += 1.0 * best_confidence
@@ -80,7 +89,11 @@ class KeywordMatcher:
                     evidence_strength=ev_level,
                     match_confidence=round(best_confidence, 2),
                     match_type="direct",
-                    quote=ev_quote
+                    quote=ev_quote,
+                    ml_tier=ml_pred.tier if ml_pred else ev_level,
+                    ml_confidence=ml_pred.confidence if ml_pred else 0.85,
+                    ml_probabilities=ml_pred.probabilities if ml_pred else {},
+                    ml_reason=ml_pred.reason if ml_pred else ""
                 ))
             else:
                 # 2. Check transferable support skills
@@ -110,6 +123,14 @@ class KeywordMatcher:
 
                     raw_evidence_levels[req] = sup_ev_level
 
+                    sup_ml_pred = None
+                    try:
+                        from ..ml.evidence.inference import predict_evidence_tier
+                        if sup_quote:
+                            sup_ml_pred = predict_evidence_tier(sup_quote, req)
+                    except Exception:
+                        sup_ml_pred = None
+
                     transferable_matches.append({
                         "requirement": req,
                         "supported_by": transferable_supports,
@@ -123,7 +144,11 @@ class KeywordMatcher:
                         evidence_strength=sup_ev_level,
                         match_confidence=0.75,
                         match_type="transferable",
-                        quote=sup_quote or f"Demonstrated transferable proficiency through {', '.join(transferable_supports)}"
+                        quote=sup_quote or f"Demonstrated transferable proficiency through {', '.join(transferable_supports)}",
+                        ml_tier=sup_ml_pred.tier if sup_ml_pred else sup_ev_level,
+                        ml_confidence=sup_ml_pred.confidence if sup_ml_pred else 0.80,
+                        ml_probabilities=sup_ml_pred.probabilities if sup_ml_pred else {},
+                        ml_reason=sup_ml_pred.reason if sup_ml_pred else ""
                     ))
                 else:
                     missing_reqs.append(req)
@@ -134,7 +159,11 @@ class KeywordMatcher:
                         evidence_strength=0,
                         match_confidence=0.0,
                         match_type="direct",
-                        quote=""
+                        quote="",
+                        ml_tier=0,
+                        ml_confidence=1.0,
+                        ml_probabilities={"0": 1.0, "1": 0.0, "2": 0.0, "3": 0.0},
+                        ml_reason="No supporting evidence found in candidate profile."
                     ))
 
         # Coverage Computations

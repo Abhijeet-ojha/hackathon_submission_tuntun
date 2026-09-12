@@ -1,0 +1,81 @@
+text,requirement,tier,reason,group_id
+"No relevant experience or skills found in this domain",Python,0,"No evidence of requirement in candidate profile",grp_001
+"Candidate has not mentioned or demonstrated any background in this area",Kubernetes,0,"No evidence of requirement in candidate profile",grp_001
+"Not listed in resume",AWS,0,"Requirement is entirely absent",grp_001
+"Experience primarily in sales and marketing with no software background",React,0,"No technical overlap with requirement",grp_002
+"Profile focuses entirely on graphic design and illustration",PostgreSQL,0,"No database or backend engineering evidence",grp_002
+"Absence of any cloud infrastructure or deployment tooling",Docker,0,"No containerization tools listed",grp_003
+"Resume contains no references to Java or JVM ecosystems",Java,0,"No programming language match",grp_003
+"Skills: Python, Java, C++, JavaScript, SQL",Python,1,"Keyword listed in skills section without project context",grp_004
+"Proficient in React, Node.js, HTML5, CSS3, and Tailwind",React,1,"Skill listed in header without implementation details",grp_004
+"Technical competencies: Docker, Kubernetes, AWS, Terraform",Docker,1,"Tools enumerated without active verbs or deliverables",grp_005
+"Core competencies include PostgreSQL, MongoDB, Redis",PostgreSQL,1,"Database list without implementation narrative",grp_005
+"Familiar with TypeScript, Next.js, and GraphQL",TypeScript,1,"Familiarity stated without application evidence",grp_006
+"Languages: C#, Go, Rust, Python, Ruby",Go,1,"Keyword in language list",grp_006
+"Knowledge of CI/CD, GitHub Actions, Jenkins, Git",CI/CD,1,"Mention of tooling in summary bullet",grp_007
+"Exposure to PyTorch, TensorFlow, Scikit-Learn",PyTorch,1,"Mention in coursework skills list",grp_007
+"Completed coursework in Data Structures, Algorithms, and Operating Systems",Data Structures,1,"Academic coursework listing without project proof",grp_008
+"Worked on a team of 5 engineers to deliver client deliverables",Agile,1,"Team size mention without personal outcome",grp_008
+"Attended a 3-day workshop on Apache Kafka and event streaming",Kafka,1,"Workshop attendance without hands-on build",grp_009
+"Certified in AWS Certified Cloud Practitioner",AWS,1,"Certification mention without architecture delivery",grp_009
+"Participated in 24-hour hackathon focusing on AI tools",AI,1,"Hackathon participation without quantified deliverable",grp_010
+"Built a full-stack task management dashboard using React, TypeScript, and Tailwind CSS",React,2,"Implemented full-stack application with active development verb",grp_011
+"Developed RESTful backend microservices in FastAPI with PostgreSQL database integration",FastAPI,2,"Engineered backend services with database integration",grp_011
+"Engineered an automated data extraction pipeline using Python and BeautifulSoup",Python,2,"Active engineering of automated pipeline",grp_012
+"Implemented user authentication and role-based access control with JWT and Node.js",Node.js,2,"Implemented secure auth system in project",grp_012
+"Created interactive data visualizations and charts using D3.js and Recharts",D3.js,2,"Created front-end data visualizations",grp_013
+"Designed relational database schema and wrote complex indexing queries in PostgreSQL",PostgreSQL,2,"Designed schema and wrote production queries",grp_013
+"Configured Docker containers and multi-stage Dockerfiles for local microservices development",Docker,2,"Configured containerization for development workflow",grp_014
+"Deployed containerized application to AWS ECS with Application Load Balancer",AWS,2,"Deployed cloud application infrastructure",grp_014
+"Trained and evaluated a Random Forest classifier using Scikit-Learn on customer dataset",Scikit-Learn,2,"Trained and validated ML model",grp_015
+"Architected an event-driven notification service utilizing Redis Pub/Sub and Celery",Redis,2,"Architected asynchronous task processing",grp_015
+"Integrated Stripe payment gateway and webhook handlers for e-commerce checkout",Payment Integration,2,"Integrated external API with webhook processing",grp_016
+"Refactored legacy monolith components into modular TypeScript interfaces",TypeScript,2,"Refactored codebase for type safety",grp_016
+"Automated test suite execution by authoring GitHub Actions CI/CD workflows",GitHub Actions,2,"Built automated continuous integration pipeline",grp_017
+"Completed 5 Python coursework projects covering algorithms and network programming",Python,2,"Project implementation across multiple assignments",grp_017
+"Collaborated on a team of 4 to build an iOS mobile application using Swift",Swift,2,"Collaborative mobile application development",grp_018
+"Developed internal dashboard in Next.js for customer support ticketing",Next.js,2,"Delivered internal business tooling",grp_018
+"Implemented GraphQL resolvers and schema stitching for federated data access",GraphQL,2,"Implemented production API schema",grp_019
+"Built real-time chat application using WebSockets and Socket.io with Express",WebSockets,2,"Real-time bidirectional communication build",grp_019
+"Maintained and monitored MongoDB Atlas clusters and configured backup policies",MongoDB,2,"Maintained database cluster operations",grp_020
+"Engineered PyTorch neural network for image classification on CIFAR-10",PyTorch,2,"Deep learning model implementation",grp_020
+"Optimized PostgreSQL query execution plans, reducing p99 API latency from 450ms to 65ms (85% reduction)",PostgreSQL,3,"Quantified latency reduction with concrete before/after metrics",grp_021
+"Engineered distributed indexing worker processing 100,000+ document uploads per minute",Python,3,"Concrete high-throughput volume scale demonstrated",grp_021
+"Trained BERT-based text classification model achieving 94.2% F1 score, outperforming baseline by 12%",NLP,3,"Quantified ML performance lift against baseline benchmark",grp_022
+"Automated CI/CD pipeline reducing build and deployment cycle duration from 45 minutes to 8 minutes",CI/CD,3,"Quantified 82% time savings in deployment pipeline",grp_022
+"Refactored React component rendering tree, cutting initial page load time by 55% across 250,000 monthly active users",React,3,"Quantified frontend performance boost at production user scale",grp_023
+"Implemented Redis caching layer handling 15,000 requests per second with 99.95% cache hit ratio",Redis,3,"Quantified throughput and reliability metrics",grp_023
+"Reduced AWS cloud infrastructure spend by $3,200 per month (40% savings) through auto-scaling policies",AWS,3,"Quantified financial savings and cost optimization",grp_024
+"Architected Elasticsearch cluster indexing 10M+ log records daily with sub-second query latency",Elasticsearch,3,"Quantified data volume and sub-second latency SLA",grp_024
+"Built automated end-to-end test suite increasing overall code coverage from 48% to 92%",Testing,3,"Quantified test coverage increase across codebase",grp_025
+"Developed real-time fraud detection pipeline processing $5M+ in daily transaction volume with 0.01% false positive rate",Python,3,"Quantified financial transaction volume and precision metric",grp_025
+"Spearheaded database migration from SQLite to PostgreSQL with zero minutes of unscheduled downtime for 50k users",PostgreSQL,3,"Zero-downtime migration at scale",grp_026
+"Scaled Node.js WebSocket gateway from 1,000 to 50,000 concurrent active connections without memory leaks",Node.js,3,"Quantified 50x concurrency scaling",grp_026
+"Improved model inference speed by 3.5x using ONNX runtime quantization and TensorRT",Machine Learning,3,"Quantified 3.5x inference acceleration",grp_027
+"Optimized bundle size by 62% using dynamic code splitting and tree-shaking in Webpack/Vite",JavaScript,3,"Quantified bundle size reduction",grp_027
+"Engineered resilient retry queue handling 2M+ daily webhook events with 99.99% successful delivery",Backend,3,"Quantified 2M+ event volume and four-nines delivery rate",grp_028
+"Authored open-source React component library adopted by 12,000+ developers with 1,500 GitHub stars",React,3,"Quantified community adoption and star count",grp_028
+"Trained custom vision model reducing defect inspection false negative rate from 8.5% to 0.4%",Computer Vision,3,"Quantified dramatic reduction in error rates",grp_029
+"Decreased Docker container image footprint from 1.4GB to 110MB (92% reduction) using alpine multi-stage builds",Docker,3,"Quantified 92% storage footprint savings",grp_029
+"Reduced database connection pool exhaustion incidents from 15/week to 0 by tuning PgBouncer",PostgreSQL,3,"Quantified incident elimination",grp_030
+"Scaled Kubernetes cluster to handle 10x traffic spikes during Black Friday with 100% uptime",Kubernetes,3,"Quantified 10x traffic scaling with 100% availability",grp_030
+"Unrelated text discussing hobbies like playing basketball and chess",Python,0,"Non-technical hobby text",grp_031
+"References previous retail cashier role handling register operations",SQL,0,"Non-software experience",grp_031
+"High school diploma in general studies",JavaScript,0,"General academic credential with no skill match",grp_032
+"Volunteered at local community animal shelter on weekends",Docker,0,"Extracurricular volunteering unrelated to requirements",grp_032
+"Familiar with Java 8, Java 11, Java 17, and Spring Boot framework",Java,1,"Versions listed without project implementation",grp_033
+"Keywords: Machine Learning, NLP, Computer Vision, LLMs, Deep Learning",Machine Learning,1,"Broad buzzwords listed in summary",grp_033
+"Worked on 3 group projects during sophomore year",Python,1,"Vague project count without technical implementation context",grp_034
+"Managed a server with 16GB RAM and 8 CPU cores",Linux,2,"Infrastructure management with system specs",grp_034
+"Created REST APIs for mobile client integration using Express and TypeScript",TypeScript,2,"Active engineering of mobile API endpoints",grp_035
+"Developed custom WordPress theme using PHP and MySQL for local business",PHP,2,"Custom web development for business client",grp_035
+"Built customer churn prediction notebook in Google Colab using Pandas and XGBoost",Pandas,2,"Data science modeling project",grp_036
+"Implemented responsive navigation and dark mode toggle with Tailwind CSS",Tailwind CSS,2,"UI feature implementation",grp_036
+"Built automated email notification cron job using Python and SMTP",Python,2,"Automated backend utility script",grp_037
+"Configured Nginx reverse proxy with SSL termination via Let's Encrypt",Nginx,2,"Web server configuration and security",grp_037
+"Reduced customer onboarding drop-off by 28% through redesigned React signup wizard",React,3,"Quantified business metric improvement",grp_038
+"Accelerated batch processing job from 6 hours to 22 minutes (94% speedup) with multiprocessing",Python,3,"Quantified 94% execution speedup",grp_038
+"Built data ingest pipeline ingesting 500GB daily log data into ClickHouse with 0 data loss",Data Engineering,3,"Quantified high volume data ingest and 100% reliability",grp_039
+"Improved API server throughput by 300% (from 400 to 1,600 req/sec) by removing synchronous I/O",Node.js,3,"Quantified 300% throughput gain",grp_039
+"Decreased AWS S3 storage costs by $1,800/mo by implementing automated lifecycle archiving rules",AWS,3,"Quantified recurring financial savings",grp_040
+"Mentored team of 6 junior developers and established code review standards that reduced production bugs by 35%",Leadership,3,"Quantified reduction in production bug rate",grp_040

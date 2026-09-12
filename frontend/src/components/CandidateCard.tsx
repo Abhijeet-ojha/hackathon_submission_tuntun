@@ -98,10 +98,32 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
             <span className={`inline-flex items-center px-2 py-0.5 rounded-full font-['Karla'] font-bold text-[11px] border ${tier.color}`}>
               {tier.label}
             </span>
+            {candidate.rank_delta !== undefined && (
+              <span
+                className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full font-['Epilogue'] font-extrabold text-[10px] border shadow-[1px_1px_0px_#2d2d2d] ${
+                  candidate.rank_delta > 0
+                    ? "bg-[#d4edda] text-[#155724] border-[#155724]"
+                    : candidate.rank_delta < 0
+                    ? "bg-[#fff3cd] text-[#856404] border-[#856404]"
+                    : "bg-[#e2e3e5] text-[#383d41] border-[#383d41]"
+                }`}
+                title={`Learned ML model shifted candidate position by ${candidate.rank_delta} ranks (Learned Score: ${candidate.learned_score ?? candidate.final_score}/100)`}
+              >
+                {candidate.rank_delta > 0 ? `▲ +${candidate.rank_delta} ML` : candidate.rank_delta < 0 ? `▼ ${candidate.rank_delta} ML` : `━ Parity`}
+              </span>
+            )}
             <span className="text-[#737782] text-xs font-['Karla'] truncate">
               {candidate.components.education_fit >= 70 ? "Relevant CS / Eng Degree" : "Equivalent Experience"}
             </span>
           </div>
+          {candidate.primary_drivers && candidate.primary_drivers.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1 mt-1 text-[10px] font-['Karla'] text-[#424750]">
+              <span className="font-bold text-primary">ML Driver:</span>
+              <span className="bg-[#f0f4ff] px-1.5 py-0.2 rounded border border-[#2d2d2d]/30 truncate max-w-[200px]">
+                {candidate.primary_drivers[0]}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Score Progress */}
@@ -127,6 +149,11 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
               style={{ width: `${Math.min(100, Math.max(5, candidate.final_score))}%` }}
             ></div>
           </div>
+          {candidate.learned_score !== undefined && (
+            <span className="text-[10px] font-['Karla'] text-[#737782] mt-0.5">
+              ML Score: <span className="font-bold text-[#1b1c1c]">{Math.round(candidate.learned_score)}</span> (Hybrid {Math.round((candidate.alpha ?? 0.75) * 100)}%)
+            </span>
+          )}
         </div>
 
         {/* Key Matches Chips */}

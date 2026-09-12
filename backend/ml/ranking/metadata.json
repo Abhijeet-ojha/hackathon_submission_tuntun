@@ -1,0 +1,89 @@
+{
+  "model_type": "Pairwise Logistic Regression (Learning-to-Rank Linear Ranker)",
+  "model_version": "ranker-v1",
+  "training_timestamp": "2026-09-12T08:23:59.147487+00:00",
+  "training_dataset_version": "ranking_seed_v1_development",
+  "dataset_type": "DEVELOPMENT_SEED_NOT_REAL_BENCHMARK",
+  "ground_truth_exists": false,
+  "validation_status": "DEVELOPMENT_MODE_NO_EXTERNAL_BENCHMARK_CLAIMED",
+  "sample_pairs_count": 20,
+  "symmetrized_pairs_count": 40,
+  "pairwise_accuracy": 0.8,
+  "features_used": [
+    "semantic_similarity",
+    "bm25_score",
+    "explicit_skill_match",
+    "required_coverage",
+    "preferred_coverage",
+    "evidence_strength",
+    "experience_project_depth",
+    "education_role_fit",
+    "direct_skill_count",
+    "transferable_skill_count",
+    "missing_required_count",
+    "tier_2_count",
+    "tier_3_count",
+    "strongest_evidence_score",
+    "critical_requirement_coverage"
+  ],
+  "feature_weights": {
+    "semantic_similarity": 0.0685,
+    "bm25_score": 0.1891,
+    "explicit_skill_match": 0.5109,
+    "required_coverage": -0.0041,
+    "preferred_coverage": 1.7488,
+    "evidence_strength": 0.0737,
+    "experience_project_depth": 0.494,
+    "education_role_fit": 1.0922,
+    "direct_skill_count": 0.9336,
+    "transferable_skill_count": -1.4538,
+    "missing_required_count": 1.2816,
+    "tier_2_count": -0.982,
+    "tier_3_count": 0.6106,
+    "strongest_evidence_score": -0.7271,
+    "critical_requirement_coverage": -0.034
+  },
+  "excluded_sensitive_features_audit": [
+    {
+      "attribute": "candidate_name",
+      "reason": "Demographic & ethnic proxy; strictly excluded to prevent bias"
+    },
+    {
+      "attribute": "gender",
+      "reason": "Protected demographic class; strictly excluded"
+    },
+    {
+      "attribute": "age",
+      "reason": "Protected class & anti-ageism equity guard; graduation year excluded"
+    },
+    {
+      "attribute": "photo",
+      "reason": "Physical appearance & demographic proxy; strictly excluded"
+    },
+    {
+      "attribute": "address",
+      "reason": "Geographic location & socioeconomic proxy; strictly excluded"
+    },
+    {
+      "attribute": "phone",
+      "reason": "Geographic area code proxy; strictly excluded"
+    },
+    {
+      "attribute": "email",
+      "reason": "Personal demographic identifier; strictly excluded"
+    },
+    {
+      "attribute": "college_prestige",
+      "reason": "Socioeconomic pedigree bias; high project density prioritized instead"
+    },
+    {
+      "attribute": "nationality",
+      "reason": "Protected immigration & national origin status; strictly excluded"
+    },
+    {
+      "attribute": "religion",
+      "reason": "Protected demographic class; strictly excluded"
+    }
+  ],
+  "offline_guarantee": "100% Local Inference (0 Network Calls)"
+}

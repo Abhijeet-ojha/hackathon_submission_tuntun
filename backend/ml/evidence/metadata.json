@@ -1,0 +1,71 @@
+{
+  "model_type": "LogisticRegression (TF-IDF + Char N-Grams + Dense NLP Features)",
+  "model_version": "evidence-v1",
+  "training_timestamp": "2026-09-12T08:21:48.320475+00:00",
+  "training_dataset_version": "evidence_seed_v1_development",
+  "dataset_type": "DEVELOPMENT_SEED_NOT_REAL_BENCHMARK",
+  "sample_count": 80,
+  "class_distribution": {
+    "0": 11,
+    "1": 16,
+    "2": 27,
+    "3": 26
+  },
+  "cv_folds": 4,
+  "cv_accuracy": 0.9,
+  "cv_macro_f1": 0.8987,
+  "per_class_metrics": {
+    "0": {
+      "precision": 0.8333,
+      "recall": 0.9091,
+      "f1": 0.8696,
+      "support": 11
+    },
+    "1": {
+      "precision": 0.8889,
+      "recall": 1.0,
+      "f1": 0.9412,
+      "support": 16
+    },
+    "2": {
+      "precision": 0.8929,
+      "recall": 0.9259,
+      "f1": 0.9091,
+      "support": 27
+    },
+    "3": {
+      "precision": 0.9545,
+      "recall": 0.8077,
+      "f1": 0.875,
+      "support": 26
+    }
+  },
+  "confusion_matrix": [
+    [
+      10,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      16,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      25,
+      1
+    ],
+    [
+      2,
+      0,
+      3,
+      21
+    ]
+  ],
+  "status": "MODEL_AVAILABLE",
+  "offline_guarantee": "100% Local Inference (0 Network Calls)"
+}

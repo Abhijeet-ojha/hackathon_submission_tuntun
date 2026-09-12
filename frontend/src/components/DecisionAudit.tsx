@@ -228,17 +228,111 @@ export const DecisionAudit: React.FC<DecisionAuditProps> = ({
         </div>
       </div>
 
-      {/* Component Rows Table */}
-      <div className="bg-white border-2 border-[#2d2d2d] shadow-[4px_4px_0px_#2d2d2d] rounded-xl overflow-hidden">
-        <div className="bg-[#f0eded] border-b-2 border-[#2d2d2d] px-4 py-3 flex items-center justify-between text-xs font-['Karla'] font-bold text-[#424750]">
-          <span>SCORING COMPONENT & WEIGHT</span>
-          <div className="flex items-center gap-6">
-            <span className="hidden sm:inline">RAW SCORE</span>
-            <span>POINTS CONTRIBUTION</span>
+      {/* Learned Ranker ML Layer Banner */}
+      {candidate.learned_score !== undefined && (
+        <div className="bg-[#f0f4ff] border-2 border-[#2d2d2d] shadow-[4px_4px_0px_#2d2d2d] rounded-xl p-5 space-y-3.5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-primary/20 pb-3">
+            <div className="flex items-center gap-2">
+              <Brain className="w-5 h-5 text-primary" />
+              <h4 className="font-['Kalam'] font-bold text-lg text-primary">
+                Learned ML Ranking Attribution (Component B)
+              </h4>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-[#2d2d2d] text-primary">
+                Mode: {candidate.ranking_mode?.toUpperCase() || "HYBRID"} (α = {candidate.alpha ?? 0.75})
+              </span>
+              <span
+                className={`text-[11px] font-extrabold px-2 py-0.5 rounded border shadow-[1px_1px_0px_#2d2d2d] ${
+                  (candidate.rank_delta ?? 0) > 0
+                    ? "bg-[#d4edda] text-[#155724] border-[#155724]"
+                    : (candidate.rank_delta ?? 0) < 0
+                    ? "bg-[#fff3cd] text-[#856404] border-[#856404]"
+                    : "bg-[#e2e3e5] text-[#383d41] border-[#383d41]"
+                }`}
+              >
+                {(candidate.rank_delta ?? 0) > 0
+                  ? `▲ +${candidate.rank_delta} Ranks`
+                  : (candidate.rank_delta ?? 0) < 0
+                  ? `▼ ${candidate.rank_delta} Ranks`
+                  : "━ Score Parity"}
+              </span>
+            </div>
           </div>
+
+          <p className="text-xs font-['Karla'] text-[#1b1c1c] leading-relaxed italic bg-white p-3 rounded-lg border border-[#2d2d2d]">
+            "{candidate.model_explanation || 'Learned ML model validates multi-feature candidate alignment with JD requirements.'}"
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="bg-white p-2.5 rounded-lg border border-[#2d2d2d]/30 text-center">
+              <span className="text-[10px] text-[#737782] block font-bold">DETERMINISTIC SCORE</span>
+              <span className="text-lg font-bold text-[#1b1c1c] font-['Epilogue']">
+                {candidate.deterministic_score ?? candidate.final_score} / 100
+              </span>
+            </div>
+            <div className="bg-white p-2.5 rounded-lg border border-[#2d2d2d]/30 text-center">
+              <span className="text-[10px] text-[#737782] block font-bold">LEARNED ML SCORE</span>
+              <span className="text-lg font-bold text-primary font-['Epilogue']">
+                {candidate.learned_score} / 100
+              </span>
+            </div>
+            <div className="bg-white p-2.5 rounded-lg border border-[#2d2d2d]/30 text-center">
+              <span className="text-[10px] text-[#737782] block font-bold">FINAL HYBRID SCORE</span>
+              <span className="text-lg font-bold text-secondary font-['Epilogue']">
+                {candidate.final_score} / 100
+              </span>
+            </div>
+          </div>
+
+          {/* 15 Features Contribution Table */}
+          {candidate.feature_contributions && candidate.feature_contributions.length > 0 && (
+            <div className="space-y-2 pt-2">
+              <span className="text-xs font-['Kalam'] font-bold text-[#1b1c1c]">
+                15 Normalized ML Ranking Features & Impact Attributions:
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {candidate.feature_contributions.map((fc, i) => (
+                  <div
+                    key={i}
+                    className={`p-2 rounded border text-xs flex items-center justify-between ${
+                      fc.direction === "positive"
+                        ? "bg-green-50/70 border-green-300"
+                        : fc.direction === "negative"
+                        ? "bg-red-50/70 border-red-300"
+                        : "bg-white border-[#2d2d2d]/20"
+                    }`}
+                  >
+                    <div className="flex flex-col min-w-0 mr-2">
+                      <span className="font-bold text-[#1b1c1c] truncate text-[11px]">{fc.feature_label}</span>
+                      <span className="text-[10px] text-[#737782]">Val: {fc.feature_value.toFixed(2)}</span>
+                    </div>
+                    <span
+                      className={`font-['Kalam'] font-bold text-xs shrink-0 ${
+                        fc.contribution_pts > 0 ? "text-green-700" : fc.contribution_pts < 0 ? "text-red-700" : "text-gray-600"
+                      }`}
+                    >
+                      {fc.contribution_pts > 0 ? `+${fc.contribution_pts}` : fc.contribution_pts} pts
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Main Audit Breakdown Box */}
+      <div className="bg-white border-2 border-[#2d2d2d] shadow-[4px_4px_0px_#2d2d2d] rounded-xl overflow-hidden">
+        {/* Table Header */}
+        <div className="bg-[#f0eded] border-b-2 border-[#2d2d2d] px-5 py-3 grid grid-cols-12 text-xs font-['Kalam'] font-bold text-[#424750]">
+          <div className="col-span-6 sm:col-span-5">SCORING COMPONENT</div>
+          <div className="hidden sm:block sm:col-span-3 text-right">RAW VALUE</div>
+          <div className="col-span-6 sm:col-span-4 text-right">CONTRIBUTION TO FINAL SCORE</div>
         </div>
 
-        <div className="divide-y-2 divide-[#2d2d2d]">
+        {/* Rows */}
+        <div className="divide-y border-[#e4e2e1]">
           {rows.map((r) => {
             const Icon = r.icon;
             const isExpanded = expandedSection === r.id;

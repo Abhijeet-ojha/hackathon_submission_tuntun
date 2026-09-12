@@ -63,6 +63,10 @@ class EvidenceGraphNode(BaseModel):
     match_confidence: float = 0.0
     match_type: str = "direct"  # "direct" | "transferable" | "keyword_only" | "semantic_only"
     quote: str = ""
+    ml_tier: Optional[int] = None
+    ml_confidence: Optional[float] = None
+    ml_probabilities: Optional[Dict[str, float]] = None
+    ml_reason: Optional[str] = None
 
 
 class ScoreComponents(BaseModel):
@@ -107,6 +111,15 @@ class CandidateScoreOutput(BaseModel):
     under_the_hood: UnderTheHoodMetrics = Field(default_factory=UnderTheHoodMetrics)
     sections_summary: Dict[str, int] = Field(default_factory=dict)
     parsing_status: str = "success"
+    learned_score: Optional[float] = None
+    deterministic_score: Optional[float] = None
+    rank_delta: int = 0
+    primary_drivers: List[str] = Field(default_factory=list)
+    counter_signals: List[str] = Field(default_factory=list)
+    feature_contributions: List[Dict[str, Any]] = Field(default_factory=list)
+    model_explanation: Optional[str] = None
+    ranking_mode: str = "hybrid"
+    alpha: float = 0.75
 
 
 class ScoringWeights(BaseModel):
@@ -138,3 +151,6 @@ class AnalysisResponse(BaseModel):
     passed_must_haves_count: int = 0
     average_score: float = 0.0
     ablation_summary: Optional[Dict[str, Any]] = None
+    ml_status: Optional[Dict[str, Any]] = None
+    ranking_mode: str = "hybrid"
+    alpha: float = 0.75

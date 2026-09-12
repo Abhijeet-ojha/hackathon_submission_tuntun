@@ -12,6 +12,10 @@ from ..matching.evidence_extractor import EvidenceExtractor
 from ..explanations.explainer import ExplainabilityEngine
 
 
+from ..ml.ranking.ranker import InternLoomRanker
+from ..ml.ranking.features import RankingFeatureExtractor
+
+
 class HybridCandidateRanker:
     def __init__(
         self,
@@ -28,12 +32,16 @@ class HybridCandidateRanker:
         self.semantic_scorer = semantic_scorer or SemanticScorer()
         self.evidence_extractor = evidence_extractor or EvidenceExtractor(self.ontology)
         self.explainer = explainer or ExplainabilityEngine()
+        self.learned_ranker = InternLoomRanker()
+        self.ranking_feature_extractor = RankingFeatureExtractor()
 
     def rank_candidates(
         self,
         candidates: List[ResumeIntelligence],
         jd: JDIntelligence,
-        weights: Optional[ScoringWeights] = None
+        weights: Optional[ScoringWeights] = None,
+        ranking_mode: str = "hybrid",
+        alpha: float = 0.75
     ) -> List[CandidateScoreOutput]:
         """
         Processes a batch of candidates against a JD and returns sorted candidate score outputs.
@@ -73,10 +81,8 @@ class HybridCandidateRanker:
             )
 
             # Step 4: Evidence Strength Component Score (0 - 100)
-            # Compute average evidence tier across matched requirements
             matched_nodes = [n for n in evidence_graph if n.evidence_strength > 0]
             if matched_nodes:
-                # Level 3 = 100%, Level 2 = 66.7%, Level 1 = 33.3%
                 avg_level = sum(n.evidence_strength for n in matched_nodes) / len(matched_nodes)
                 evidence_strength_score = min(100.0, (avg_level / 3.0) * 100.0)
             else:
@@ -151,8 +157,35 @@ class HybridCandidateRanker:
                 parsing_status=candidate.parsing_status
             ))
 
-        # Step 8: Deterministic Sort & Assign Ranks
-        # Primary: final_score descending, Secondary: required_coverage, Tertiary: evidence_strength
+        # Step 8: Compute ML Ranking Features & Hybrid Learned Blending
+        cand_feat_pairs = []
+        for cand_out in scored_outputs:
+            if cand_out.parsing_status in ["scanned_or_empty", "corrupted"]:
+                feat_dict = {f: 0.0 for f in self.ranking_feature_extractor.get_feature_names()}
+            else:
+                feat_dict = self.ranking_feature_extractor.extract_features(cand_out, jd)
+            cand_feat_pairs.append((cand_out, feat_dict))
+
+        learned_results = self.learned_ranker.rank_candidates(cand_feat_pairs, mode=ranking_mode, alpha=alpha)
+        learned_map = {res.candidate_id: res for res in learned_results}
+
+        # Step 9: Finalize Candidate Outputs with ML Attributions & Ranks
+        for cand_out in scored_outputs:
+            ml_res = learned_map.get(cand_out.candidate_id)
+            if ml_res:
+                cand_out.deterministic_score = ml_res.deterministic_score
+                cand_out.learned_score = ml_res.learned_score
+                cand_out.final_score = ml_res.final_score
+                cand_out.rank = ml_res.final_rank
+                cand_out.rank_delta = ml_res.rank_delta
+                cand_out.primary_drivers = ml_res.primary_drivers
+                cand_out.counter_signals = ml_res.counter_signals
+                cand_out.feature_contributions = [c.model_dump() for c in ml_res.feature_contributions]
+                cand_out.model_explanation = ml_res.model_explanation
+                cand_out.ranking_mode = ranking_mode
+                cand_out.alpha = alpha
+
+        # Step 10: Sort strictly by final_score descending
         scored_outputs.sort(
             key=lambda c: (c.final_score, c.components.required_coverage, c.components.evidence_strength),
             reverse=True
