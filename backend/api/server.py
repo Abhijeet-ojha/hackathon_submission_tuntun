@@ -16,6 +16,7 @@ from ..ontology.skill_ontology import SkillOntology
 from ..ranking.hybrid_ranker import HybridCandidateRanker
 from ..explanations.comparator import CandidateComparator
 from ..explanations.bias_detector import JDBiasDetector
+from ..explanations.query_engine import RecruiterQueryEngine
 
 
 app = FastAPI(
@@ -40,6 +41,7 @@ jd_parser = JDParser(ontology)
 ranker = HybridCandidateRanker(ontology=ontology)
 comparator = CandidateComparator()
 bias_detector = JDBiasDetector()
+query_engine = RecruiterQueryEngine(ontology=ontology)
 
 # In-memory cached demo state for fast live testing
 CACHED_DEMO_ANALYSIS: Optional[AnalysisResponse] = None
@@ -61,6 +63,12 @@ class CompareRequest(BaseModel):
 class JDBiasRequest(BaseModel):
     jd_text: str
     role_title: Optional[str] = None
+
+
+class RecruiterQueryRequest(BaseModel):
+    query: str
+    analysis: Optional[AnalysisResponse] = None
+
 
 
 @app.get("/")
@@ -286,4 +294,130 @@ def load_sample_data_internal(track: str = "standard"):
         average_score=round(avg_score, 2),
         ablation_summary=ablation
     )
+
+
+@app.post("/api/query")
+def recruiter_query_endpoint(req: RecruiterQueryRequest):
+    global CACHED_DEMO_ANALYSIS
+    analysis = req.analysis or CACHED_DEMO_ANALYSIS
+    if not analysis:
+        load_sample_data_internal()
+        analysis = CACHED_DEMO_ANALYSIS
+
+    result = query_engine.process_query(req.query, analysis)
+    return result
+
+
+@app.get("/api/evaluation-metrics")
+def get_evaluation_metrics():
+    global CACHED_DEMO_ANALYSIS, CACHED_PARSED_CANDIDATES, CACHED_JD
+    if not CACHED_DEMO_ANALYSIS:
+        load_sample_data_internal()
+
+    analysis = CACHED_DEMO_ANALYSIS
+    candidates = analysis.candidates
+    jd = analysis.jd
+
+    total_candidates = len(candidates)
+    total_requirements = len(jd.must_have_skills + jd.technical_skills)
+
+    # Match types breakdown
+    total_direct = 0
+    total_transferable = 0
+    total_missing = 0
+    total_tier3 = 0
+    total_tier2 = 0
+    total_tier1 = 0
+
+    for c in candidates:
+        for node in c.evidence_graph:
+            if node.match_type == "direct":
+                total_direct += 1
+            elif node.match_type == "transferable":
+                total_transferable += 1
+            if node.evidence_strength == 3:
+                total_tier3 += 1
+            elif node.evidence_strength == 2:
+                total_tier2 += 1
+            elif node.evidence_strength == 1:
+                total_tier1 += 1
+        total_missing += len(c.missing_requirements)
+
+    total_evidence_nodes = sum(len(c.evidence_graph) for c in candidates)
+    evidence_coverage_pct = round(
+        (sum(1 for c in candidates if c.components.evidence_strength >= 50.0) / total_candidates) * 100.0
+        if total_candidates > 0 else 0.0, 1
+    )
+
+    # Semantic vs BM25 Divergence: % of pairs where semantic rank disagrees with BM25 rank
+    ablation = analysis.ablation_summary or {}
+    bm25_ranks = {item["candidate_id"]: item["rank"] for item in ablation.get("keyword_only", [])}
+    sem_ranks = {item["candidate_id"]: item["rank"] for item in ablation.get("semantic_only", [])}
+    divergence_count = 0
+    for cid, b_rank in bm25_ranks.items():
+        s_rank = sem_ranks.get(cid, b_rank)
+        if abs(b_rank - s_rank) >= 2:
+            divergence_count += 1
+    
+    divergence_rate_pct = round((divergence_count / total_candidates) * 100.0 if total_candidates > 0 else 0.0, 1)
+
+    return {
+        "total_candidates_evaluated": total_candidates,
+        "total_target_requirements": total_requirements,
+        "evidence_coverage_rate_pct": evidence_coverage_pct,
+        "semantic_vs_bm25_divergence_pct": divergence_rate_pct,
+        "direct_matches_count": total_direct,
+        "transferable_matches_count": total_transferable,
+        "missing_anchors_count": total_missing,
+        "tier_distribution": {
+            "tier_3_metric_outcomes": total_tier3,
+            "tier_2_implementation_proof": total_tier2,
+            "tier_1_keyword_mentions": total_tier1,
+        },
+        "deterministic_verification": "100% Deterministic (Zero Cloud AI)",
+        "model_architecture": "Hybrid (MiniLM Embeddings + BM25 + RapidFuzz + Skill Ontology)",
+        "ablation_proof_ready": bool(ablation)
+    }
+
+
+@app.get("/api/export/csv")
+def export_shortlist_csv():
+    global CACHED_DEMO_ANALYSIS
+    if not CACHED_DEMO_ANALYSIS:
+        load_sample_data_internal()
+
+    import csv
+    import io
+    from fastapi.responses import Response
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow([
+        "Rank", "Candidate Name", "Final Score", "Must-Have Coverage %",
+        "Semantic Relevance %", "Keyword Score %", "Evidence Strength %",
+        "Top Highlight", "Remaining Gaps", "Evidence Confidence"
+    ])
+
+    for c in CACHED_DEMO_ANALYSIS.candidates:
+        conf = "HIGH" if c.components.evidence_strength >= 70 else ("MEDIUM" if c.components.evidence_strength >= 40 else "LOW")
+        writer.writerow([
+            c.rank,
+            c.candidate_name,
+            c.final_score,
+            c.components.required_coverage,
+            c.components.semantic,
+            c.components.keyword,
+            c.components.evidence_strength,
+            c.top_why.strongest_evidence or (c.reasons[0] if c.reasons else ""),
+            "; ".join(c.missing_requirements[:2]),
+            conf
+        ])
+
+    csv_content = output.getvalue()
+    return Response(
+        content=csv_content,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=internloom_shortlist.csv"}
+    )
+
 

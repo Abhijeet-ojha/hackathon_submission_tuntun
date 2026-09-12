@@ -29,9 +29,10 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: "setup", label: "Set Up Workspace", icon: FileText },
     { id: "matrix", label: "Skill Gap Matrix", icon: Grid },
     { id: "compare", label: "Compare Dossier", icon: GitCompare },
+    { id: "eval-lab", label: "Evaluation Lab", icon: Zap },
     { id: "bias", label: "JD Bias Inspector", icon: ShieldCheck },
-    { id: "ablation", label: "Ablation Proof", icon: Zap },
-    { id: "how-it-works", label: "How It Works", icon: HelpCircle },
+    { id: "ablation", label: "Ablation Proof", icon: HelpCircle },
+    { id: "how-it-works", label: "How It Works", icon: Sliders },
   ];
 
   return (

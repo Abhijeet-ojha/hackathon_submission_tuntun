@@ -9,6 +9,8 @@ import {
   Terminal,
   Network,
   GitCompare,
+  Calculator,
+  ShieldCheck
 } from "lucide-react";
 import {
   Radar,
@@ -19,11 +21,13 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
-import type { CandidateScoreOutput, JDIntelligence } from "../types";
+import type { CandidateScoreOutput, JDIntelligence, ScoringWeights } from "../types";
+import { DecisionAudit } from "./DecisionAudit";
 
 interface CandidateDetailModalProps {
   candidate: CandidateScoreOutput | null;
   jd: JDIntelligence | null;
+  weights?: ScoringWeights;
   onClose: () => void;
   onCompareWithAnother?: (candidate: CandidateScoreOutput) => void;
 }
@@ -31,14 +35,25 @@ interface CandidateDetailModalProps {
 export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
   candidate,
   jd,
+  weights,
   onClose,
   onCompareWithAnother,
 }) => {
   const [activeTab, setActiveTab] = useState<
-    "overview" | "graph" | "skills" | "underthehood"
-  >("overview");
+    "overview" | "audit" | "graph" | "skills" | "underthehood"
+  >("audit");
 
   if (!candidate) return null;
+
+  const defaultWeights: ScoringWeights = weights || {
+    semantic: 0.25,
+    keyword: 0.25,
+    required_coverage: 0.20,
+    preferred_coverage: 0.10,
+    evidence_strength: 0.10,
+    experience_relevance: 0.05,
+    education_fit: 0.05,
+  };
 
   const radarData = [
     { subject: "Semantic NLP", score: candidate.components.semantic, fullMark: 100 },
@@ -50,44 +65,45 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
     { subject: "Education", score: candidate.components.education_fit, fullMark: 100 },
   ];
 
-  const getTierBadge = (level: number) => {
-    if (level === 3) {
-      return (
-        <span className="px-2 py-0.5 text-[11px] font-bold bg-[#eaf8ee] text-[#1b8a3b] border-2 border-[#2d2d2d] rounded-md shadow-[1px_1px_0px_#2d2d2d] flex items-center gap-1 font-['Karla']">
-          <Sparkles className="w-3 h-3 text-[#1b8a3b]" />
-          Tier 3: Measurable Impact
-        </span>
-      );
+  const getTierBadge = (tier: number) => {
+    switch (tier) {
+      case 3:
+        return (
+          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-[#fff9c4] text-[#856404] border border-[#2d2d2d] shadow-[1px_1px_0px_#2d2d2d] inline-flex items-center gap-1">
+            ★ Tier 3 (Metrics & Proof)
+          </span>
+        );
+      case 2:
+        return (
+          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-[#d6e3ff] text-primary border border-[#2d2d2d] shadow-[1px_1px_0px_#2d2d2d] inline-flex items-center gap-1">
+            ● Tier 2 (Action Verbs)
+          </span>
+        );
+      case 1:
+        return (
+          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-[#f0eded] text-[#424750] border border-[#2d2d2d] shadow-[1px_1px_0px_#2d2d2d] inline-flex items-center gap-1">
+            ○ Tier 1 (Keyword Mention)
+          </span>
+        );
+      default:
+        return (
+          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-red-100 text-red-700 border border-[#2d2d2d] inline-flex items-center gap-1">
+            ✕ Tier 0 (Absent)
+          </span>
+        );
     }
-    if (level === 2) {
-      return (
-        <span className="px-2 py-0.5 text-[11px] font-bold bg-[#d6e3ff] text-primary border-2 border-[#2d2d2d] rounded-md shadow-[1px_1px_0px_#2d2d2d] font-['Karla']">
-          Tier 2: Demonstrated Project
-        </span>
-      );
-    }
-    if (level === 1) {
-      return (
-        <span className="px-2 py-0.5 text-[11px] font-bold bg-[#fff9c4] text-[#2d2d2d] border-2 border-[#2d2d2d] rounded-md shadow-[1px_1px_0px_#2d2d2d] font-['Karla']">
-          Tier 1: Mentioned Only
-        </span>
-      );
-    }
-    return (
-      <span className="px-2 py-0.5 text-[11px] font-bold bg-[#f0eded] text-[#737782] border-2 border-[#2d2d2d] rounded-md shadow-[1px_1px_0px_#2d2d2d] font-['Karla']">
-        Tier 0: Absent
-      </span>
-    );
   };
 
-  return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#2d2d2d]/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
-      <div className="relative bg-[#fcf9f8] border-2 border-[#2d2d2d] shadow-[8px_8px_0px_#2d2d2d] rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
-        {/* Washi Tape Accent over Header */}
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-44 h-6 bg-[#f0e8d0]/95 border border-[#2d2d2d]/30 rotate-[-1deg] z-20 pointer-events-none shadow-sm flex items-center justify-center">
-          <span className="w-full border-t border-dashed border-[#2d2d2d]/30"></span>
-        </div>
+  const confidence =
+    candidate.components.evidence_strength >= 70
+      ? { label: "HIGH CONFIDENCE", color: "bg-green-100 text-green-800 border-green-700" }
+      : candidate.components.evidence_strength >= 40
+      ? { label: "MEDIUM CONFIDENCE", color: "bg-yellow-100 text-yellow-800 border-yellow-700" }
+      : { label: "LOW CONFIDENCE", color: "bg-red-100 text-red-800 border-red-700" };
 
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xs">
+      <div className="bg-[#fcf9f8] border-2 border-[#2d2d2d] shadow-[8px_8px_0px_#2d2d2d] rounded-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-150">
         {/* Modal Header */}
         <div className="px-6 pt-6 pb-4 border-b-2 border-[#2d2d2d] flex items-center justify-between bg-[#fdfbf7]">
           <div className="flex items-center gap-3.5">
@@ -101,6 +117,9 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                 </h2>
                 <span className="text-xs font-mono px-2 py-0.5 bg-[#f0eded] text-[#424750] rounded border border-[#2d2d2d]">
                   {candidate.candidate_id}
+                </span>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${confidence.color}`}>
+                  {confidence.label}
                 </span>
               </div>
               <p className="text-xs text-[#737782] font-['Karla'] mt-0.5">
@@ -144,6 +163,7 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
         {/* Modal Tabs Bar */}
         <div className="px-6 border-b-2 border-[#2d2d2d] bg-[#f0eded] flex gap-2 pt-2 overflow-x-auto">
           {[
+            { id: "audit", label: "Decision Audit (Math)", icon: Calculator },
             { id: "overview", label: "Audit Dossier", icon: Award },
             { id: "graph", label: "Evidence Graph", icon: Network },
             { id: "skills", label: "Skill Gap Map", icon: Layers },
@@ -170,6 +190,15 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
 
         {/* Modal Scrollable Content */}
         <div className="p-6 overflow-y-auto flex-1 space-y-6 bg-[#fcf9f8]">
+          {/* TAB 0: DECISION AUDIT */}
+          {activeTab === "audit" && (
+            <DecisionAudit
+              candidate={candidate}
+              weights={defaultWeights}
+              jd={jd}
+            />
+          )}
+
           {/* TAB 1: OVERVIEW & WHY THIS CANDIDATE */}
           {activeTab === "overview" && (
             <div className="space-y-6">

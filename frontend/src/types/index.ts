@@ -131,3 +131,31 @@ export type AnalysisResponse = {
   average_score: number;
   ablation_summary?: AblationResult;
 };
+
+export type RecruiterQueryResult = {
+  query: string;
+  answer: string;
+  rule_applied: string;
+  intent: string;
+  candidate_refs: string[];
+  evidence_quotes: string[];
+};
+
+export type EvaluationMetrics = {
+  total_candidates_evaluated: number;
+  total_target_requirements: number;
+  evidence_coverage_rate_pct: number;
+  semantic_vs_bm25_divergence_pct: number;
+  direct_matches_count: number;
+  transferable_matches_count: number;
+  missing_anchors_count: number;
+  tier_distribution: {
+    tier_3_metric_outcomes: number;
+    tier_2_implementation_proof: number;
+    tier_1_keyword_mentions: number;
+  };
+  deterministic_verification: string;
+  model_architecture: string;
+  ablation_proof_ready: boolean;
+};
+

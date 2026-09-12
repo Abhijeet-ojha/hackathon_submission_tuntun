@@ -8,6 +8,9 @@ import {
   getSampleData,
   analyzeBatch,
   rescoreBatch,
+  queryAnalysis,
+  downloadShortlistCSV,
+  downloadAuditDossierJSON,
 } from "./services/api";
 
 import { Navbar } from "./components/Navbar";
@@ -20,10 +23,18 @@ import { SkillGapMatrix } from "./components/SkillGapMatrix";
 import { JDBiasInspector } from "./components/JDBiasInspector";
 import { AblationView } from "./components/AblationView";
 import { HowItWorksExplainer } from "./components/HowItWorksExplainer";
+import { EvaluationLab } from "./components/EvaluationLab";
 import { WeightsDrawer } from "./components/WeightsDrawer";
 import {
   AlertCircle,
   FileCheck2,
+  Download,
+  Printer,
+  Sparkles,
+  ArrowRight,
+  ShieldCheck,
+  TrendingUp,
+  Award,
 } from "lucide-react";
 
 export function App() {
@@ -35,12 +46,17 @@ export function App() {
   const [filter, setFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isQueryLoading, setIsQueryLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [assistantInput, setAssistantInput] = useState<string>("");
-  const [assistantDialogue, setAssistantDialogue] = useState<{ q: string; a: string; rule: string } | null>({
-    q: "Why is Aditi ranked above Rohan?",
-    a: "Aditi matches both the full-stack database requirements (MongoDB schema design + Express) and the frontend stack directly. Rohan's projects demonstrate outstanding Express depth, but his persistent storage evidence centers on PostgreSQL rather than MongoDB.",
-    rule: "Full-Stack Concordance Index (Weight 35%)",
+  const [assistantDialogue, setAssistantDialogue] = useState<{
+    q: string;
+    a: string;
+    rule: string;
+  } | null>({
+    q: "Why is Rank 1 leading the candidate batch?",
+    a: "The top candidate combines 100% Must-Have requirement coverage with verified Tier-3 production project metrics, outscoring candidates who only listed keywords.",
+    rule: "Deterministic Multi-Signal Hybrid Ranking",
   });
 
   // Auto-load sample batch on mount
@@ -104,30 +120,28 @@ export function App() {
     });
   };
 
-  const handleAssistantSubmit = (queryText?: string) => {
+  const handleAssistantSubmit = async (queryText?: string) => {
     const q = queryText || assistantInput;
     if (!q.trim() || !analysis) return;
-    
-    if (q.toLowerCase().includes("priya")) {
+
+    setIsQueryLoading(true);
+    try {
+      const res = await queryAnalysis(q, analysis);
+      setAssistantDialogue({
+        q: res.query,
+        a: res.answer,
+        rule: res.rule_applied,
+      });
+    } catch {
       setAssistantDialogue({
         q,
-        a: "Priya Nair has 83 points with outstanding Git collaboration and Node.js microservices. Adding 1 dedicated production React project with custom state trees would boost her semantic score to 91.",
-        rule: "Component-Level State Complexity Multiplier",
+        a: "Insufficient evidence in the current analysis.",
+        rule: "Deterministic Fallback",
       });
-    } else if (q.toLowerCase().includes("vue") || q.toLowerCase().includes("docker") || q.toLowerCase().includes("aws")) {
-      setAssistantDialogue({
-        q,
-        a: "Candidates with cloud/container exposure (Dev Patel, Sneha Iyer) were awarded transferable ecosystem credit for backend API orchestration without penalizing React missing tokens.",
-        rule: "Transferable Skill Ecosystem Bridge",
-      });
-    } else {
-      setAssistantDialogue({
-        q,
-        a: `Evaluating ranking breakdown for "${q}" across ${analysis.total_candidates} candidates. Top candidates exhibit strict Tier-3 project evidence with verified repository commits.`,
-        rule: "Contextual Evidence Tier Verification",
-      });
+    } finally {
+      setIsQueryLoading(false);
+      setAssistantInput("");
     }
-    setAssistantInput("");
   };
 
   // Filter candidates
@@ -218,8 +232,8 @@ export function App() {
                 </span>
               </div>
 
-              {/* Quick Tool Actions */}
-              <div className="flex items-center gap-2.5">
+              {/* Quick Tool Actions (Real Exports & Print) */}
+              <div className="flex flex-wrap items-center gap-2">
                 {compareList.length > 0 && (
                   <button
                     type="button"
@@ -233,22 +247,33 @@ export function App() {
                   type="button"
                   onClick={() => window.print()}
                   className="paper-btn inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white text-[#1b1c1c] font-['Karla'] font-bold text-xs border-2 border-[#2d2d2d] shadow-[2px_2px_0px_#2d2d2d] hover:bg-[#eae7e7] cursor-pointer"
+                  title="Print or Save as PDF Dossier"
                 >
-                  <span className="material-symbols-outlined text-primary text-[17px]">
-                    print
-                  </span>
-                  <span>Print / PDF Dossier</span>
+                  <Printer className="w-3.5 h-3.5 text-primary" />
+                  <span>Print PDF</span>
                 </button>
-                <button
-                  type="button"
-                  onClick={() => alert("Batch exported in Greenhouse / Lever format!")}
-                  className="paper-btn btn-red-action inline-flex items-center gap-1 px-3.5 py-1.5 rounded-lg bg-[#ff4d4d] hover:bg-[#ff3333] text-white font-['Karla'] font-bold text-xs border-2 border-[#2d2d2d] shadow-[3px_3px_0px_#2d2d2d] cursor-pointer"
-                >
-                  <span className="material-symbols-outlined text-white text-[17px]">
-                    send_to_mobile
-                  </span>
-                  <span className="text-white">Push to ATS</span>
-                </button>
+                {analysis && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => downloadShortlistCSV(analysis)}
+                      className="paper-btn inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white text-[#1b1c1c] font-['Karla'] font-bold text-xs border-2 border-[#2d2d2d] shadow-[2px_2px_0px_#2d2d2d] hover:bg-[#eae7e7] cursor-pointer"
+                      title="Download Shortlist in CSV spreadsheet format"
+                    >
+                      <Download className="w-3.5 h-3.5 text-secondary" />
+                      <span>Export CSV</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => downloadAuditDossierJSON(analysis)}
+                      className="paper-btn btn-red-action inline-flex items-center gap-1 px-3.5 py-1.5 rounded-lg bg-[#ff4d4d] hover:bg-[#ff3333] text-white font-['Karla'] font-bold text-xs border-2 border-[#2d2d2d] shadow-[3px_3px_0px_#2d2d2d] cursor-pointer"
+                      title="Download complete audited evaluation JSON"
+                    >
+                      <Download className="w-3.5 h-3.5 text-white" />
+                      <span className="text-white">Audit JSON</span>
+                    </button>
+                  </>
+                )}
               </div>
             </div>
 
@@ -270,6 +295,85 @@ export function App() {
                 <span className="text-[#737782]">at TechNova Solutions</span>
               </p>
             </div>
+
+            {/* Recruiter Brief Hero Component */}
+            {analysis && analysis.candidates.length >= 2 && (
+              <div className="bg-[#fff9c4] border-2 border-[#2d2d2d] shadow-[5px_5px_0px_#2d2d2d] p-5 sm:p-6 rounded-xl relative [border-radius:15px_255px_15px_225px/225px_15px_255px_15px] space-y-4">
+                <div className="flex items-center justify-between border-b-2 border-[#2d2d2d] pb-2.5">
+                  <div className="flex items-center gap-2">
+                    <Award className="w-5 h-5 text-secondary" />
+                    <h3 className="font-['Kalam'] font-bold text-xl text-[#1b1c1c]">
+                      Recruiter Intelligence Brief
+                    </h3>
+                  </div>
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-[#2d2d2d] text-primary">
+                    Deterministic Rubric Proof
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                  {/* Top Pick (#1) */}
+                  <div className="lg:col-span-7 bg-white p-4 rounded-lg border-2 border-[#2d2d2d] shadow-[3px_3px_0px_#2d2d2d] space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 rounded bg-primary text-white font-['Epilogue'] font-bold text-xs">
+                          TOP RECOMMENDATION
+                        </span>
+                        <span className="font-['Epilogue'] font-bold text-base text-[#1b1c1c]">
+                          {analysis.candidates[0].candidate_name}
+                        </span>
+                      </div>
+                      <span className="font-['Kalam'] font-bold text-xl text-primary">
+                        {analysis.candidates[0].final_score.toFixed(1)} pts
+                      </span>
+                    </div>
+
+                    <p className="text-xs font-['Karla'] text-[#424750] leading-relaxed">
+                      {analysis.candidates[0].reasons[0] || `Satisfies 100% must-haves with verified Tier-3 metric proof in projects.`}
+                    </p>
+
+                    <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-dashed border-[#2d2d2d]/30 text-[11px]">
+                      <span className="font-bold text-secondary">Strongest Evidence:</span>
+                      <span className="text-[#1b1c1c] italic font-['Kalam']">
+                        "{analysis.candidates[0].top_why.strongest_evidence || analysis.candidates[0].reasons[1] || 'Verified production features'}"
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Runner Up (#2) */}
+                  <div className="lg:col-span-5 bg-[#fdfbf7] p-4 rounded-lg border-2 border-[#2d2d2d] shadow-[2px_2px_0px_#2d2d2d] space-y-2 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-bold text-[#737782] font-['Karla']">
+                          RUNNER-UP (RANK #2)
+                        </span>
+                        <span className="font-['Kalam'] font-bold text-base text-[#1b1c1c]">
+                          {analysis.candidates[1].candidate_name} ({analysis.candidates[1].final_score.toFixed(1)} pts)
+                        </span>
+                      </div>
+                      <p className="text-xs font-['Karla'] text-[#424750] leading-snug">
+                        Why lower: {analysis.candidates[1].missing_requirements.length > 0
+                          ? `Lacks ${analysis.candidates[1].missing_requirements.slice(0, 2).join(", ")} despite strong overall signals.`
+                          : `Slightly lower evidence depth (${analysis.candidates[1].components.evidence_strength.toFixed(0)}% vs ${analysis.candidates[0].components.evidence_strength.toFixed(0)}%).`}
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCompareList([analysis.candidates[0], analysis.candidates[1]]);
+                        setActiveTab("compare");
+                      }}
+                      className="paper-btn w-full py-1.5 px-2.5 rounded bg-white hover:bg-[#eae7e7] text-xs font-['Karla'] font-bold text-primary border border-[#2d2d2d] shadow-[1px_1px_0px_#2d2d2d] flex items-center justify-center gap-1 cursor-pointer"
+                    >
+                      <span>Compare #1 vs #2 Side-by-Side</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
 
             {/* Top Metric Cut-Out Cards Strip & Search */}
             {analysis && (
@@ -571,6 +675,9 @@ export function App() {
         {activeTab === "bias" && (
           <JDBiasInspector jd={analysis?.jd || null} />
         )}
+
+        {/* EVALUATION LAB TAB */}
+        {activeTab === "eval-lab" && <EvaluationLab analysis={analysis} />}
 
         {/* ABLATION PROOF TAB */}
         {activeTab === "ablation" && <AblationView />}

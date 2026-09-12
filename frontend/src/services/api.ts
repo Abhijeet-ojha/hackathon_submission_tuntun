@@ -116,3 +116,97 @@ export async function getAblationCheck(): Promise<AblationResult> {
   }
   return res.json();
 }
+
+export async function queryAnalysis(
+  query: string,
+  analysis?: AnalysisResponse
+): Promise<import("../types").RecruiterQueryResult> {
+  const res = await fetch(`${API_BASE}/api/query`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query, analysis }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Query processing failed");
+  }
+
+  return res.json();
+}
+
+export async function getEvaluationMetrics(): Promise<import("../types").EvaluationMetrics> {
+  const res = await fetch(`${API_BASE}/api/evaluation-metrics`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch evaluation metrics");
+  }
+  return res.json();
+}
+
+export async function loadDataset(track: string = "web_sde"): Promise<AnalysisResponse> {
+  const res = await fetch(`${API_BASE}/api/load-dataset?track=${track}`, {
+    method: "POST",
+  });
+  if (!res.ok) {
+    throw new Error("Failed to load dataset");
+  }
+  return res.json();
+}
+
+export function downloadShortlistCSV(analysis: AnalysisResponse) {
+  const headers = [
+    "Rank",
+    "Candidate Name",
+    "Final Score",
+    "Must-Have Coverage %",
+    "Semantic Relevance %",
+    "Keyword Score %",
+    "Evidence Strength %",
+    "Top Highlight",
+    "Remaining Gaps",
+    "Evidence Confidence",
+  ];
+
+  const rows = analysis.candidates.map((c) => {
+    const conf =
+      c.components.evidence_strength >= 70
+        ? "HIGH"
+        : c.components.evidence_strength >= 40
+        ? "MEDIUM"
+        : "LOW";
+    return [
+      c.rank,
+      `"${c.candidate_name}"`,
+      c.final_score,
+      c.components.required_coverage,
+      c.components.semantic,
+      c.components.keyword,
+      c.components.evidence_strength,
+      `"${(c.top_why.strongest_evidence || (c.reasons && c.reasons[0]) || "").replace(/"/g, '""')}"`,
+      `"${c.missing_requirements.slice(0, 2).join("; ")}"`,
+      conf,
+    ].join(",");
+  });
+
+  const csvContent = [headers.join(","), ...rows].join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", `InternLoom_Shortlist_${new Date().toISOString().slice(0, 10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+export function downloadAuditDossierJSON(analysis: AnalysisResponse) {
+  const jsonStr = JSON.stringify(analysis, null, 2);
+  const blob = new Blob([jsonStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", `InternLoom_Full_Audit_Dossier_${new Date().toISOString().slice(0, 10)}.json`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
