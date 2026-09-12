@@ -1,0 +1,19 @@
+Job Title: Machine Learning Engineer Intern
+
+About the Role:
+We are seeking a Machine Learning Engineer Intern to build, fine-tune, and evaluate applied NLP and Computer Vision models.
+
+Responsibilities:
+- Develop, train, and benchmark machine learning models using Python and PyTorch or TensorFlow.
+- Perform exploratory data analysis and data preprocessing using Pandas and NumPy.
+- Implement evaluation pipelines using Scikit-Learn for precision, recall, and F1-score optimization.
+- Package and deploy inference models using Docker and FastAPI.
+
+Requirements (Must-Have):
+- Strong programming skills in Python.
+- Proven experience with PyTorch, TensorFlow, or Scikit-Learn.
+- Solid foundation in Data Structures & Algorithms and Machine Learning fundamentals.
+
+Nice-to-Have:
+- Experience with Natural Language Processing (NLP), HuggingFace Transformers, or Computer Vision.
+- Familiarity with Docker and Cloud platforms (AWS/GCP).

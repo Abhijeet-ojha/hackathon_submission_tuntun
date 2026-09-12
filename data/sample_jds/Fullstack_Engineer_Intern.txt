@@ -1,0 +1,27 @@
+Job Title: Full-Stack Software Engineering Intern
+
+About Us:
+InternLoom is building next-generation developer productivity tools. We are looking for an ambitious Full-Stack Software Engineering Intern to join our core product team.
+
+Responsibilities:
+- Build responsive, accessible user interfaces using React.js and TypeScript.
+- Design, implement, and maintain scalable REST APIs and microservices using Node.js and Express.
+- Collaborate with database engineers to design schema models and optimize queries in PostgreSQL or MongoDB.
+- Participate in code reviews, write comprehensive unit tests with Jest/Pytest, and implement CI/CD workflows using Git.
+- Optimize frontend and backend performance for sub-second latency and high concurrency.
+
+Requirements (Must-Have):
+- Strong proficiency in JavaScript or TypeScript.
+- Demonstrated experience building interactive frontend applications with React.js.
+- Hands-on experience developing REST APIs using Node.js or backend frameworks.
+- Familiarity with version control using Git.
+
+Preferred Qualifications (Nice-to-Have):
+- Experience with Next.js, Redux, or Tailwind CSS for modern UI design.
+- Familiarity with Docker and containerization.
+- Knowledge of relational or NoSQL databases (PostgreSQL, MongoDB).
+- Basic understanding of CI/CD pipelines and automated testing.
+
+Education & Experience:
+- Currently pursuing a Bachelor's or Master's degree in Computer Science, Software Engineering, or related technical field.
+- Graduating in 2025, 2026, or 2027.

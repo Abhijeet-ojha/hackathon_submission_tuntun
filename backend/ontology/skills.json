@@ -1,0 +1,316 @@
+{
+  "skills": {
+    "javascript": {
+      "canonical": "JavaScript",
+      "category": "language",
+      "aliases": ["javascript", "js", "ecmascript", "es6", "es2015", "es2020", "vanilla js"],
+      "supports": ["frontend", "backend", "web development"]
+    },
+    "typescript": {
+      "canonical": "TypeScript",
+      "category": "language",
+      "aliases": ["typescript", "ts"],
+      "supports": ["javascript", "frontend", "backend"]
+    },
+    "python": {
+      "canonical": "Python",
+      "category": "language",
+      "aliases": ["python", "python3", "python 3", "py"],
+      "supports": ["backend", "data science", "machine learning"]
+    },
+    "java": {
+      "canonical": "Java",
+      "category": "language",
+      "aliases": ["java", "core java", "java 8", "java 11", "java 17", "java 21"],
+      "supports": ["backend", "object-oriented programming"]
+    },
+    "c++": {
+      "canonical": "C++",
+      "category": "language",
+      "aliases": ["c++", "cpp", "c plus plus"],
+      "supports": ["systems programming", "algorithms"]
+    },
+    "c#": {
+      "canonical": "C#",
+      "category": "language",
+      "aliases": ["c#", "csharp", "c sharp", ".net"],
+      "supports": ["backend", "software engineering"]
+    },
+    "golang": {
+      "canonical": "Go",
+      "category": "language",
+      "aliases": ["go", "golang"],
+      "supports": ["backend", "microservices", "cloud"]
+    },
+    "rust": {
+      "canonical": "Rust",
+      "category": "language",
+      "aliases": ["rust", "rustlang"],
+      "supports": ["systems programming"]
+    },
+    "sql": {
+      "canonical": "SQL",
+      "category": "database",
+      "aliases": ["sql", "structured query language", "relational database", "rdbms"],
+      "supports": ["database", "data querying"]
+    },
+    "html": {
+      "canonical": "HTML",
+      "category": "frontend",
+      "aliases": ["html", "html5", "semantic html"],
+      "supports": ["frontend", "web development"]
+    },
+    "css": {
+      "canonical": "CSS",
+      "category": "frontend",
+      "aliases": ["css", "css3", "vanilla css", "stylesheets"],
+      "supports": ["frontend", "web development", "ui design"]
+    },
+    "react": {
+      "canonical": "React.js",
+      "category": "frontend",
+      "aliases": ["react", "reactjs", "react.js", "react native", "react hooks", "create react app"],
+      "supports": ["frontend", "web development", "javascript", "spa"]
+    },
+    "next.js": {
+      "canonical": "Next.js",
+      "category": "frontend",
+      "aliases": ["next.js", "nextjs", "next js", "next"],
+      "supports": ["react", "frontend", "server-side rendering", "full stack"]
+    },
+    "vue": {
+      "canonical": "Vue.js",
+      "category": "frontend",
+      "aliases": ["vue", "vuejs", "vue.js", "vue3"],
+      "supports": ["frontend", "web development", "javascript"]
+    },
+    "angular": {
+      "canonical": "Angular",
+      "category": "frontend",
+      "aliases": ["angular", "angularjs", "angular 2+", "angular 14"],
+      "supports": ["frontend", "typescript", "spa"]
+    },
+    "tailwind css": {
+      "canonical": "Tailwind CSS",
+      "category": "frontend",
+      "aliases": ["tailwind", "tailwindcss", "tailwind css"],
+      "supports": ["css", "frontend", "ui styling"]
+    },
+    "bootstrap": {
+      "canonical": "Bootstrap",
+      "category": "frontend",
+      "aliases": ["bootstrap", "bootstrap 5", "bootstrap 4"],
+      "supports": ["css", "frontend"]
+    },
+    "redux": {
+      "canonical": "Redux",
+      "category": "frontend",
+      "aliases": ["redux", "redux toolkit", "rtk", "redux state management"],
+      "supports": ["react", "state management", "frontend"]
+    },
+    "node.js": {
+      "canonical": "Node.js",
+      "category": "backend",
+      "aliases": ["node", "nodejs", "node.js", "node js"],
+      "supports": ["backend", "javascript", "rest api", "server-side"]
+    },
+    "express": {
+      "canonical": "Express.js",
+      "category": "backend",
+      "aliases": ["express", "expressjs", "express.js"],
+      "supports": ["node.js", "backend", "rest api", "microservices"]
+    },
+    "fastapi": {
+      "canonical": "FastAPI",
+      "category": "backend",
+      "aliases": ["fastapi", "fast api"],
+      "supports": ["python", "backend", "rest api", "async api"]
+    },
+    "django": {
+      "canonical": "Django",
+      "category": "backend",
+      "aliases": ["django", "django rest framework", "drf"],
+      "supports": ["python", "backend", "full stack", "rest api"]
+    },
+    "flask": {
+      "canonical": "Flask",
+      "category": "backend",
+      "aliases": ["flask", "flask-restful"],
+      "supports": ["python", "backend", "microservices"]
+    },
+    "spring boot": {
+      "canonical": "Spring Boot",
+      "category": "backend",
+      "aliases": ["spring boot", "springboot", "spring framework", "spring", "spring mvc"],
+      "supports": ["java", "backend", "microservices", "enterprise systems"]
+    },
+    "rest api": {
+      "canonical": "REST API",
+      "category": "backend",
+      "aliases": ["rest api", "restful api", "rest apis", "api development", "restful web services", "api design", "rest"],
+      "supports": ["backend", "web services", "microservices"]
+    },
+    "graphql": {
+      "canonical": "GraphQL",
+      "category": "backend",
+      "aliases": ["graphql", "graph ql", "apollo graphql"],
+      "supports": ["api development", "backend", "frontend"]
+    },
+    "postgresql": {
+      "canonical": "PostgreSQL",
+      "category": "database",
+      "aliases": ["postgresql", "postgres", "psql", "postgre sql"],
+      "supports": ["sql", "database", "relational database"]
+    },
+    "mysql": {
+      "canonical": "MySQL",
+      "category": "database",
+      "aliases": ["mysql", "my sql", "mariadb"],
+      "supports": ["sql", "database", "relational database"]
+    },
+    "mongodb": {
+      "canonical": "MongoDB",
+      "category": "database",
+      "aliases": ["mongodb", "mongo", "nosql mongodb", "mongoose"],
+      "supports": ["database", "nosql", "node.js", "mern stack"]
+    },
+    "redis": {
+      "canonical": "Redis",
+      "category": "database",
+      "aliases": ["redis", "redis cache", "in-memory database"],
+      "supports": ["caching", "database", "backend performance"]
+    },
+    "docker": {
+      "canonical": "Docker",
+      "category": "devops",
+      "aliases": ["docker", "dockerfile", "containerization", "containers", "docker-compose", "docker compose"],
+      "supports": ["devops", "cloud", "deployment", "microservices"]
+    },
+    "kubernetes": {
+      "canonical": "Kubernetes",
+      "category": "devops",
+      "aliases": ["kubernetes", "k8s", "container orchestration"],
+      "supports": ["docker", "devops", "cloud"]
+    },
+    "git": {
+      "canonical": "Git",
+      "category": "tool",
+      "aliases": ["git", "github", "gitlab", "bitbucket", "version control", "vcs"],
+      "supports": ["software engineering", "collaboration", "ci/cd"]
+    },
+    "ci/cd": {
+      "canonical": "CI/CD",
+      "category": "devops",
+      "aliases": ["ci/cd", "ci cd", "continuous integration", "github actions", "jenkins", "gitlab ci"],
+      "supports": ["devops", "automation"]
+    },
+    "aws": {
+      "canonical": "AWS",
+      "category": "cloud",
+      "aliases": ["aws", "amazon web services", "ec2", "s3", "lambda", "rds"],
+      "supports": ["cloud", "deployment", "devops"]
+    },
+    "azure": {
+      "canonical": "Azure",
+      "category": "cloud",
+      "aliases": ["azure", "microsoft azure"],
+      "supports": ["cloud", "devops"]
+    },
+    "gcp": {
+      "canonical": "GCP",
+      "category": "cloud",
+      "aliases": ["gcp", "google cloud", "google cloud platform"],
+      "supports": ["cloud", "devops"]
+    },
+    "linux": {
+      "canonical": "Linux",
+      "category": "os",
+      "aliases": ["linux", "ubuntu", "debian", "bash", "unix", "shell scripting"],
+      "supports": ["devops", "systems"]
+    },
+    "pytorch": {
+      "canonical": "PyTorch",
+      "category": "ai_ml",
+      "aliases": ["pytorch", "torch", "torchvision"],
+      "supports": ["machine learning", "deep learning", "python"]
+    },
+    "tensorflow": {
+      "canonical": "TensorFlow",
+      "category": "ai_ml",
+      "aliases": ["tensorflow", "tf", "keras"],
+      "supports": ["machine learning", "deep learning", "python"]
+    },
+    "scikit-learn": {
+      "canonical": "Scikit-Learn",
+      "category": "ai_ml",
+      "aliases": ["scikit-learn", "scikit learn", "sklearn", "scikit"],
+      "supports": ["machine learning", "data science", "python"]
+    },
+    "pandas": {
+      "canonical": "Pandas",
+      "category": "ai_ml",
+      "aliases": ["pandas", "dataframe", "data analysis"],
+      "supports": ["data science", "python", "data manipulation"]
+    },
+    "numpy": {
+      "canonical": "NumPy",
+      "category": "ai_ml",
+      "aliases": ["numpy", "num py", "numerical computing"],
+      "supports": ["data science", "python", "matrix computation"]
+    },
+    "nlp": {
+      "canonical": "Natural Language Processing (NLP)",
+      "category": "ai_ml",
+      "aliases": ["nlp", "natural language processing", "text mining", "spacy", "nltk", "transformers", "bert", "huggingface"],
+      "supports": ["machine learning", "artificial intelligence"]
+    },
+    "computer vision": {
+      "canonical": "Computer Vision",
+      "category": "ai_ml",
+      "aliases": ["computer vision", "cv", "opencv", "image processing", "object detection", "yolo"],
+      "supports": ["machine learning", "artificial intelligence"]
+    },
+    "data structures and algorithms": {
+      "canonical": "Data Structures & Algorithms",
+      "category": "core",
+      "aliases": ["data structures", "algorithms", "dsa", "leetcode", "problem solving", "algorithmic problem solving"],
+      "supports": ["software engineering", "computer science fundamentals"]
+    },
+    "object-oriented programming": {
+      "canonical": "Object-Oriented Programming (OOP)",
+      "category": "core",
+      "aliases": ["oop", "object oriented programming", "oops", "object-oriented design"],
+      "supports": ["software engineering", "java", "c++", "python"]
+    },
+    "testing": {
+      "canonical": "Unit Testing & QA",
+      "category": "qa",
+      "aliases": ["unit testing", "pytest", "jest", "mocha", "junit", "tdd", "test driven development", "qa testing"],
+      "supports": ["software engineering", "code quality"]
+    },
+    "agile": {
+      "canonical": "Agile / Scrum",
+      "category": "methodology",
+      "aliases": ["agile", "scrum", "kanban", "sprint planning", "jira"],
+      "supports": ["collaboration", "software lifecycle"]
+    },
+    "microservices": {
+      "canonical": "Microservices",
+      "category": "architecture",
+      "aliases": ["microservices", "microservice architecture", "distributed systems"],
+      "supports": ["backend", "system design"]
+    },
+    "communication": {
+      "canonical": "Communication Skills",
+      "category": "soft_skills",
+      "aliases": ["communication", "verbal communication", "written communication", "team player", "presentation", "cross-functional collaboration"],
+      "supports": ["teamwork", "leadership"]
+    },
+    "problem solving": {
+      "canonical": "Problem Solving",
+      "category": "soft_skills",
+      "aliases": ["problem solving", "analytical skills", "critical thinking", "debugging"],
+      "supports": ["software engineering"]
+    }
+  }
+}
